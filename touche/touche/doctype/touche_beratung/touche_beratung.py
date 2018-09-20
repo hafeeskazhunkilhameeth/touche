@@ -12,6 +12,7 @@ class ToucheBeratung(Document):
 
 
 def getSummeAufwand(self):
+	#set total time for Beratung
 	time = 0
 	hh = 0
 	mm = 0
