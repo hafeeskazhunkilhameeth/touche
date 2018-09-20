@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include touche *.css
+recursive-include touche *.csv
+recursive-include touche *.html
+recursive-include touche *.ico
+recursive-include touche *.js
+recursive-include touche *.json
+recursive-include touche *.md
+recursive-include touche *.png
+recursive-include touche *.py
+recursive-include touche *.svg
+recursive-include touche *.txt
+recursive-exclude touche *.pyc
