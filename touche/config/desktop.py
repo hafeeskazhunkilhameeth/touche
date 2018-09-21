@@ -7,7 +7,7 @@ def get_data():
 		{
 			"module_name": "Touche",
 			"color": "blue",
-			"icon": "'octicon octicon-ruby",
+			"icon": "octicon octicon-ruby",
 			"type": "module",
 			"label": _("Touche")
 		}
