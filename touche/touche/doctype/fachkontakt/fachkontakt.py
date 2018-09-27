@@ -5,6 +5,48 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe.contacts.address_and_contact import delete_contact_and_address
 
 class Fachkontakt(Document):
-	pass
+	def onload(self):
+		"""Load address and contacts in `__onload`"""
+		load_address_and_contact(self)
+		
+	def on_trash(self):
+		delete_contact_and_address('Customer', self.name)
+
+def load_address_and_contact(doc, key=None):
+	"""Loads address list and contact list in `__onload`"""
+	from frappe.contacts.doctype.address.address import get_address_display
+
+	filters = [
+		["Dynamic Link", "link_doctype", "=", "Customer"],
+		["Dynamic Link", "link_name", "=", doc.customer],
+		["Dynamic Link", "parenttype", "=", "Address"],
+	]
+	address_list = frappe.get_all("Address", filters=filters, fields=["*"])
+
+	address_list = [a.update({"display": get_address_display(a)})
+		for a in address_list]
+
+	address_list = sorted(address_list,
+		lambda a, b:
+			(int(a.is_primary_address - b.is_primary_address)) or
+			(1 if a.modified - b.modified else 0), reverse=True)
+
+	doc.set_onload('addr_list', address_list)
+
+	contact_list = []
+	filters = [
+		["Dynamic Link", "link_doctype", "=", "Customer"],
+		["Dynamic Link", "link_name", "=", doc.customer],
+		["Dynamic Link", "parenttype", "=", "Contact"],
+	]
+	contact_list = frappe.get_all("Contact", filters=filters, fields=["*"])
+
+	contact_list = sorted(contact_list,
+		lambda a, b:
+			(int(a.is_primary_contact - b.is_primary_contact)) or
+			(1 if a.modified - b.modified else 0), reverse=True)
+
+	doc.set_onload('contact_list', contact_list)
