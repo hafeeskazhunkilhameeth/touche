@@ -104,9 +104,9 @@ function startRechnungslauf() {
 			} else if (lauf == "Mitglieder") {
 				rechnungslaufMitglieder(lauf, end, mitglied_typ);
 			} else if (lauf == "Anwalte") {
-				rechnungslaufAnwalt();
+				rechnungslaufAnwalt(lauf);
 			} else if (lauf == "Kanzleien") {
-				rechnungslaufKanzlei();
+				rechnungslaufKanzlei(lauf);
 			}
 			return false;
 		},
