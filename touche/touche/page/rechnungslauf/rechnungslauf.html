@@ -6,7 +6,7 @@
 			</div>
 			<div class="col-sm-3">
 				<div class="radio">
-					<label><input type="radio" name="optradio" onclick="showMitgliedDetails()" id="alle" checked>Alle</label>
+					<label><input type="radio" name="optradio" onclick="showPartialMitgliedDetails()" id="alle" checked>Alle</label>
 				</div>
 				<div class="radio">
 					<label><input type="radio" name="optradio" onclick="showMitgliedDetails()" id="mitglieder">Mitglieder</label>
@@ -20,8 +20,8 @@
 			</div>
 			<div class="col-sm-3">
 				<div class="form-group">
-					<label for="sel1" id="mitglied-typ-label">Mitglied Typ:</label>
-					<select class="form-control" id="mitglied-typ">
+					<label for="sel1" id="mitglied-typ-label" class="hidden">Mitglied Typ:</label>
+					<select class="form-control hidden" id="mitglied-typ">
 						<option>Alle</option>
 						<option>Einzel</option>
 						<option>Familie</option>

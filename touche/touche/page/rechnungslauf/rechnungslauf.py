@@ -46,39 +46,62 @@ def rechnungslauf(lauf=None, typ=None, end=None):
 		return mitglieder, anwalte, kanzleien
 		
 	if lauf == "Mitglieder":
-		mitglieder_ohne_austritt = frappe.get_list("Customer", fields=["name", "status_mitgliedschaft"], filters =
-			[["status_mitgliedschaft", "!=", "Ehemalig"],
-			["status_mitgliedschaft", "!=", "Gegenseitig"],
-			["status_mitgliedschaft", "!=", "Gratis"],
-			["status_mitgliedschaft", "!=", "Beratungskontakt"],
-			["status_mitgliedschaft", "!=", "Fachkontakt"],
-			["disabled", "!=", "1"],
-			["name", "!=", "Guest"],
-			["austritt", "<", "1900-01-01"]])
-		
-		today = utils.today()
-		cur_year = today.split("-")[0]
-		end_of_year = cur_year + "-12-31"
-		mitglieder_mit_austritt = frappe.get_list("Customer", fields=["name", "status_mitgliedschaft"], filters =
-			[["status_mitgliedschaft", "!=", "Ehemalig"],
-			["status_mitgliedschaft", "!=", "Gegenseitig"],
-			["status_mitgliedschaft", "!=", "Gratis"],
-			["status_mitgliedschaft", "!=", "Beratungskontakt"],
-			["status_mitgliedschaft", "!=", "Fachkontakt"],
-			["disabled", "!=", "1"], 
-			["austritt", ">=", end or end_of_year]])
+		if typ == "Alle":
+			mitglieder_ohne_austritt = frappe.get_list("Customer", fields=["name", "status_mitgliedschaft"], filters =
+				[["status_mitgliedschaft", "!=", "Ehemalig"],
+				["status_mitgliedschaft", "!=", "Gegenseitig"],
+				["status_mitgliedschaft", "!=", "Gratis"],
+				["status_mitgliedschaft", "!=", "Beratungskontakt"],
+				["status_mitgliedschaft", "!=", "Fachkontakt"],
+				["disabled", "!=", "1"],
+				["name", "!=", "Guest"],
+				["austritt", "<", "1900-01-01"]])
 			
-	if lauf == "Anwalt":
+			today = utils.today()
+			cur_year = today.split("-")[0]
+			end_of_year = cur_year + "-12-31"
+			mitglieder_mit_austritt = frappe.get_list("Customer", fields=["name", "status_mitgliedschaft"], filters =
+				[["status_mitgliedschaft", "!=", "Ehemalig"],
+				["status_mitgliedschaft", "!=", "Gegenseitig"],
+				["status_mitgliedschaft", "!=", "Gratis"],
+				["status_mitgliedschaft", "!=", "Beratungskontakt"],
+				["status_mitgliedschaft", "!=", "Fachkontakt"],
+				["disabled", "!=", "1"], 
+				["austritt", ">=", end or end_of_year]])
+		else:
+			mitglieder_ohne_austritt = frappe.get_list("Customer", fields=["name", "status_mitgliedschaft"], filters =
+				[["status_mitgliedschaft", "=", typ],
+				["disabled", "!=", "1"],
+				["name", "!=", "Guest"],
+				["austritt", "<", "1900-01-01"]])
+			
+			today = utils.today()
+			cur_year = today.split("-")[0]
+			end_of_year = cur_year + "-12-31"
+			mitglieder_mit_austritt = frappe.get_list("Customer", fields=["name", "status_mitgliedschaft"], filters =
+				[["status_mitgliedschaft", "=", typ],
+				["disabled", "!=", "1"], 
+				["austritt", ">=", end or end_of_year]])
+		
+		mitglieder = mitglieder_ohne_austritt + mitglieder_mit_austritt
+		create_invoice(mitglieder)
+		return mitglieder
+			
+	if lauf == "Anwalte":
 		anwalte = frappe.get_list("Fachkontakt", fields=["customer", "betrag", "anrede"], filters =
 			[["rechnung", "=", "1"],
 			["typ", "=", "Jurist"],
 			["deaktiviert", "!=", "1"]])
+		create_invoice(anwalte)
+		return anwalte
 			
-	if lauf == "Kanzlei":
+	if lauf == "Kanzleien":
 		kanzleien = frappe.get_list("Fachkontakt", fields=["customer", "betrag", "anrede"], filters =
 			[["rechnung", "=", "1"],
 			["typ", "=", "Kanzlei"],
 			["deaktiviert", "!=", "1"]])
+		create_invoice(kanzleien)
+		return kanzleien
 
 def create_invoice(customers):
 	# sales_invoice = frappe.new_doc("Sales Invoice")

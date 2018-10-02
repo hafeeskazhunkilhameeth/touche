@@ -29,17 +29,48 @@ frappe.rechnungslauf = {
 }
 
 function showMitgliedDetails() {
-	document.getElementById("mitglied-typ").classList.remove('hidden');
-	document.getElementById("end").classList.remove('hidden');
-	document.getElementById("mitglied-typ-label").classList.remove('hidden');
-	document.getElementById("end-label").classList.remove('hidden');
+	if (document.getElementById("mitglied-typ").classList.contains('hidden')) {
+		document.getElementById("mitglied-typ").classList.remove('hidden');
+	}
+	if (document.getElementById("end").classList.contains('hidden')) {
+		document.getElementById("end").classList.remove('hidden');
+	}
+	if (document.getElementById("mitglied-typ-label").classList.contains('hidden')) {
+		document.getElementById("mitglied-typ-label").classList.remove('hidden');
+	}
+	if (document.getElementById("end-label").classList.contains('hidden')) {
+		document.getElementById("end-label").classList.remove('hidden');
+	}
+}
+
+function showPartialMitgliedDetails() {
+	if (!document.getElementById("mitglied-typ").classList.contains('hidden')) {
+		document.getElementById("mitglied-typ").classList.add('hidden');
+	}
+	if (!document.getElementById("mitglied-typ-label").classList.contains('hidden')) {
+		document.getElementById("mitglied-typ-label").classList.add('hidden');
+	}
+	if (document.getElementById("end").classList.contains('hidden')) {
+		document.getElementById("end").classList.remove('hidden');
+	}
+	if (document.getElementById("end-label").classList.contains('hidden')) {
+		document.getElementById("end-label").classList.remove('hidden');
+	}
 }
 
 function hideMitgliedDetails() {
-	document.getElementById("mitglied-typ").classList.add('hidden');
-	document.getElementById("end").classList.add('hidden');
-	document.getElementById("mitglied-typ-label").classList.add('hidden');
-	document.getElementById("end-label").classList.add('hidden');
+	if (!document.getElementById("mitglied-typ").classList.contains('hidden')) {
+		document.getElementById("mitglied-typ").classList.add('hidden');
+	}
+	if (!document.getElementById("end").classList.contains('hidden')) {
+		document.getElementById("end").classList.add('hidden');
+	}
+	if (!document.getElementById("mitglied-typ-label").classList.contains('hidden')) {
+		document.getElementById("mitglied-typ-label").classList.add('hidden');
+	}
+	if (!document.getElementById("end-label").classList.contains('hidden')) {
+		document.getElementById("end-label").classList.add('hidden');
+	}
 }
 
 function startRechnungslauf() {
@@ -53,7 +84,7 @@ function startRechnungslauf() {
 	} else if (document.getElementById('mitglieder').checked) {
 		lauf = "Mitglieder";
 	} else if (document.getElementById('anwalt').checked) {
-		lauf = "Anwälte";
+		lauf = "Anwalte";
 	} else if (document.getElementById('kanzlei').checked) {
 		lauf = "Kanzleien";
 	}
@@ -68,12 +99,11 @@ function startRechnungslauf() {
 	frappe.confirm(
 		confirmText,
 		function(){
-			console.log(lauf + " / " + mitglied_typ + " / " + end);
 			if (lauf == "Alle") {
 				rechnungslaufAlle(lauf, end);
 			} else if (lauf == "Mitglieder") {
-				rechnungslaufMitglieder();
-			} else if (lauf == "Anwälte") {
+				rechnungslaufMitglieder(lauf, end, mitglied_typ);
+			} else if (lauf == "Anwalte") {
 				rechnungslaufAnwalt();
 			} else if (lauf == "Kanzleien") {
 				rechnungslaufKanzlei();
@@ -87,7 +117,6 @@ function startRechnungslauf() {
 }
 
 function rechnungslaufAlle(lauf, end) {
-	console.log("go alle");
 	openNav();
 	frappe.call({
 		method: 'touche.touche.page.rechnungslauf.rechnungslauf.rechnungslauf',
@@ -107,19 +136,63 @@ function rechnungslaufAlle(lauf, end) {
 	});
 }
 
-function rechnungslaufMitglieder() {
-	console.log("go mitglieder");
+function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 	openNav();
+	frappe.call({
+		method: 'touche.touche.page.rechnungslauf.rechnungslauf.rechnungslauf',
+		args: {
+			'lauf': lauf,
+			'end': end,
+			'typ': mitglied_typ
+		},
+		callback: function(r) {
+			if (r.message) {
+				closeNav();
+				console.log(r.message);
+			} else {
+				closeNav();
+				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
+			}
+		}
+	});
 }
 
-function rechnungslaufAnwalt() {
-	console.log("go anwalt");
+function rechnungslaufAnwalt(lauf) {
 	openNav();
+	frappe.call({
+		method: 'touche.touche.page.rechnungslauf.rechnungslauf.rechnungslauf',
+		args: {
+			'lauf': lauf
+		},
+		callback: function(r) {
+			if (r.message) {
+				closeNav();
+				console.log(r.message);
+			} else {
+				closeNav();
+				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
+			}
+		}
+	});
 }
 
-function rechnungslaufKanzlei() {
-	console.log("go kanzlei");
+function rechnungslaufKanzlei(lauf) {
 	openNav();
+	frappe.call({
+		method: 'touche.touche.page.rechnungslauf.rechnungslauf.rechnungslauf',
+		args: {
+			'lauf': lauf
+		},
+		callback: function(r) {
+			if (r.message) {
+				closeNav();
+				console.log(r.message);
+			} else {
+				closeNav();
+				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
+			}
+		}
+	});
 }
 
 /* Open */
