@@ -1,0 +1,69 @@
+<div style="margin: 5px;">
+	<div class="section-body">
+		<div class="row">
+			<div class="col-sm-3">
+				<button class="btn btn-primary btn-sm primary-action" style="margin-left: 15px; margin-top: 15px;" onclick="startRechnungslauf()"><span>Start Rechnungslauf</span></button>
+			</div>
+			<div class="col-sm-3">
+				<div class="radio">
+					<label><input type="radio" name="optradio" onclick="showMitgliedDetails()" id="alle" checked>Alle</label>
+				</div>
+				<div class="radio">
+					<label><input type="radio" name="optradio" onclick="showMitgliedDetails()" id="mitglieder">Mitglieder</label>
+				</div>
+				<div class="radio">
+					<label><input type="radio" name="optradio" onclick="hideMitgliedDetails()" id="anwalt">Anwälte</label>
+				</div>
+				<div class="radio">
+					<label><input type="radio" name="optradio" onclick="hideMitgliedDetails()" id="kanzlei">Kanzleien</label>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="form-group">
+					<label for="sel1" id="mitglied-typ-label">Mitglied Typ:</label>
+					<select class="form-control" id="mitglied-typ">
+						<option>Alle</option>
+						<option>Einzel</option>
+						<option>Familie</option>
+						<option>Kollektiv</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="end" id="end-label">Mitglied bis:</label>
+					<input type="date" class="form-control" id="end">
+				</div>
+			</div>
+			<div class="col-sm-3"></div>
+		</div>
+		<div class="row">
+			<div class="col-sm-3">
+				<img src="assets/pflanzenfreund/images/Geschenk.png" alt="Geschenk-Bullet" style="width: 100%;" class="hidden" id="geschenk-bullet">
+				<img src="assets/pflanzenfreund/images/Promotion.png" alt="Promotion-Bullet" style="width: 100%;" class="hidden" id="promotion-bullet">
+			</div>
+			<div class="col-sm-8">
+				<div class="form-group hidden" id="bullet-text">
+					<label for="comment">Bullet Text:</label>
+					<textarea class="form-control" rows="5" id="comment"></textarea>
+				</div>
+			</div>
+			<div class="col-sm-1"></div>
+		</div>
+		<div class="row">
+			<div class="form-column col-sm-12">
+				<table class="hidden" id="myTable" style="width: 100%;">
+					<tr class="header">
+						<th style="width:50%;">Abonnementennummer</th>
+						<th style="width:50%;">Rechnungsnummer</th>
+					</tr>
+				</table> 
+			</div>
+		</div>
+  </div>
+</div>
+<div id="myNav" class="overlay">
+	<!-- Overlay content -->
+  <div class="overlay-content">
+    <p><i class="fa fa-spinner fa-spin" style="font-size:80px"></i></p>
+    <p>Bitte haben Sie einen Moment Geduld, die neuen Rechnungen werden erstellt.</p>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+{
+ "content": null, 
+ "creation": "2018-10-02 07:56:28.690450", 
+ "docstatus": 0, 
+ "doctype": "Page", 
+ "idx": 0, 
+ "modified": "2018-10-02 07:56:40.446053", 
+ "modified_by": "Administrator", 
+ "module": "Touche", 
+ "name": "rechnungslauf", 
+ "owner": "Administrator", 
+ "page_name": "Rechnungslauf", 
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ], 
+ "script": null, 
+ "standard": "Yes", 
+ "style": null, 
+ "system_page": 0, 
+ "title": "Rechnungslauf"
+}

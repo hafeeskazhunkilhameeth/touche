@@ -59,6 +59,12 @@ def get_data():
 			"label": _("Rechnungsstellung"),
 			"items": [
 				{
+				   "type": "page",
+				   "name": "rechnungslauf",
+				   "label": _("Rechnungslauf"),
+				   "description": _("Rechnungslauf")
+				},
+				{
 					"type": "doctype",
 					"name": "Sales Invoice",
 					"label": _("Kundenrechnungen"),
