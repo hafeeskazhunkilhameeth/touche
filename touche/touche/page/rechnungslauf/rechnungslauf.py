@@ -6,19 +6,20 @@ from frappe import utils
 @frappe.whitelist()
 def rechnungslauf(lauf=None, typ=None, end=None):
 	if lauf == "Alle":
-		mitglieder_ohne_austritt = frappe.get_list("Customer", fields=["name"], filters =
+		mitglieder_ohne_austritt = frappe.get_list("Customer", fields=["name", "status_mitgliedschaft"], filters =
 			[["status_mitgliedschaft", "!=", "Ehemalig"],
 			["status_mitgliedschaft", "!=", "Gegenseitig"],
 			["status_mitgliedschaft", "!=", "Gratis"],
 			["status_mitgliedschaft", "!=", "Beratungskontakt"],
 			["status_mitgliedschaft", "!=", "Fachkontakt"],
-			["disabled", "!=", "1"], 
-			["austritt", "=", ""]])
+			["disabled", "!=", "1"],
+			["name", "!=", "Guest"],
+			["austritt", "<", "1900-01-01"]])
 		
 		today = utils.today()
 		cur_year = today.split("-")[0]
 		end_of_year = cur_year + "-12-31"
-		mitglieder_mit_austritt = frappe.get_list("Customer", fields=["name"], filters =
+		mitglieder_mit_austritt = frappe.get_list("Customer", fields=["name", "status_mitgliedschaft"], filters =
 			[["status_mitgliedschaft", "!=", "Ehemalig"],
 			["status_mitgliedschaft", "!=", "Gegenseitig"],
 			["status_mitgliedschaft", "!=", "Gratis"],
@@ -27,7 +28,7 @@ def rechnungslauf(lauf=None, typ=None, end=None):
 			["disabled", "!=", "1"], 
 			["austritt", ">=", end or end_of_year]])
 			
-		mitglieder = list(set(mitglieder_ohne_austritt + mitglieder_mit_austritt))
+		mitglieder = mitglieder_ohne_austritt + mitglieder_mit_austritt
 		return mitglieder
 			
 		#anwalte
