@@ -280,6 +280,8 @@ function crateTableContentElement(pos, referenz, mitglied_art, betrag) {
 	
 	row.appendChild(cell_1);
 	row.appendChild(cell_2);
+	row.appendChild(cell_3);
+	row.appendChild(cell_4);
 	row.onclick = function() { 
 		window.location = '/desk#Form/Sales Invoice/' + referenz
 	};
