@@ -133,6 +133,7 @@ function rechnungslaufAlle(lauf, end) {
 				//console.log(r.message);
 				for (y = 0; y < r.message.length; y++) {
 					for (i = 0; i < r.message[y].length; i++) {
+						var referenz = r.message[y][i];
 						var table = document.getElementById("myTable");
 						var row = document.createElement("tr");
 						var cell_1 = document.createElement("td");
@@ -144,7 +145,7 @@ function rechnungslaufAlle(lauf, end) {
 						row.appendChild(cell_1);
 						row.appendChild(cell_2);
 						row.onclick = function() { 
-								window.location = '/desk#Form/Sales Invoice/' + r.message[y][i];
+								window.location = '/desk#Form/Sales Invoice/' + referenz;
 						};
 						table.appendChild(row);
 					}
@@ -175,6 +176,7 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
+					var referenz = r.message[i];
 					var table = document.getElementById("myTable");
 					var row = document.createElement("tr");
 					var cell_1 = document.createElement("td");
@@ -186,7 +188,7 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 					row.appendChild(cell_1);
 					row.appendChild(cell_2);
 					row.onclick = function() { 
-						window.location = '/desk#Form/Sales Invoice/' + r.message[i];
+						window.location = '/desk#Form/Sales Invoice/' + referenz;
 					};
 					table.appendChild(row);
 				}
@@ -214,6 +216,7 @@ function rechnungslaufAnwalt(lauf) {
 				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
+					var referenz = r.message[i];
 					var table = document.getElementById("myTable");
 					var row = document.createElement("tr");
 					var cell_1 = document.createElement("td");
@@ -225,7 +228,7 @@ function rechnungslaufAnwalt(lauf) {
 					row.appendChild(cell_1);
 					row.appendChild(cell_2);
 					row.onclick = function() { 
-						window.location = '/desk#Form/Sales Invoice/' + r.message[i];
+						window.location = '/desk#Form/Sales Invoice/' + referenz;
 					};
 					table.appendChild(row);
 				}
@@ -253,6 +256,7 @@ function rechnungslaufKanzlei(lauf) {
 				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
+					var referenz = r.message[i];
 					var table = document.getElementById("myTable");
 					var row = document.createElement("tr");
 					var cell_1 = document.createElement("td");
@@ -264,7 +268,7 @@ function rechnungslaufKanzlei(lauf) {
 					row.appendChild(cell_1);
 					row.appendChild(cell_2);
 					row.onclick = function() { 
-						window.location = '/desk#Form/Sales Invoice/' + r.message[i];
+						window.location = '/desk#Form/Sales Invoice/' + referenz
 					};
 					table.appendChild(row);
 				}
