@@ -9,5 +9,12 @@ frappe.ui.form.on('Fachkontakt', {
 		} else {
 			frappe.contacts.clear_address_and_contact(frm);
 		}
+	},
+	rechnung: function(frm) {
+		if (frm.doc.rechnung == "1") {
+			cur_frm.set_df_property('customer','reqd','1');
+		} else {
+			cur_frm.set_df_property('customer','reqd',0);
+		}
 	}
 });
