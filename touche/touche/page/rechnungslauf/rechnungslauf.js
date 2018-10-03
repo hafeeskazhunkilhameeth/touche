@@ -91,8 +91,7 @@ function startRechnungslauf() {
 	
 	if ((lauf == "Alle") || (lauf == "Mitglieder")) {
 		confirmText = "Sie haben folgende Auswahl getroffen, möchten Sie den Rechnungslauf starten?<br><b>Rechnungslauf für: </b> " + lauf +
-			"<br><b>Mitglied Typ: </b> " + mitglied_typ +
-			"<br><b>Mitglied bis: </b> " + end;
+			"<br><b>Mitglied Typ: </b> " + mitglied_typ;
 	} else {
 		confirmText = "Sie haben folgende Auswahl getroffen, möchten Sie den Rechnungslauf starten?<br><b>Rechnungslauf für: </b> " + lauf;
 	}
@@ -127,6 +126,7 @@ function rechnungslaufAlle(lauf, end) {
 		callback: function(r) {
 			if (r.message) {
 				closeNav();
+				clearTable();
 				if (document.getElementById("myTable").classList.contains('hidden')) {
 					document.getElementById("myTable").classList.remove('hidden');
 				}
@@ -136,13 +136,16 @@ function rechnungslaufAlle(lauf, end) {
 						var table = document.getElementById("myTable");
 						var row = document.createElement("tr");
 						var cell_1 = document.createElement("td");
-						var cell_1_txt = document.createTextNode(String(y) + "." + String(i + 1));
+						var cell_1_txt = document.createTextNode(String(y + 1) + "." + String(i + 1));
 						cell_1.appendChild(cell_1_txt);
 						var cell_2 = document.createElement("td");
 						var cell_2_txt = document.createTextNode(r.message[y][i]);
 						cell_2.appendChild(cell_2_txt);
 						row.appendChild(cell_1);
 						row.appendChild(cell_2);
+						row.onclick = function() { 
+								window.location = '/desk#Form/Sales Invoice/' + r.message[y][i];
+						};
 						table.appendChild(row);
 					}
 				}
@@ -166,6 +169,10 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 		callback: function(r) {
 			if (r.message) {
 				closeNav();
+				clearTable();
+				if (document.getElementById("myTable").classList.contains('hidden')) {
+					document.getElementById("myTable").classList.remove('hidden');
+				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
 					var table = document.getElementById("myTable");
@@ -178,6 +185,9 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 					cell_2.appendChild(cell_2_txt);
 					row.appendChild(cell_1);
 					row.appendChild(cell_2);
+					row.onclick = function() { 
+						window.location = '/desk#Form/Sales Invoice/' + r.message[i];
+					};
 					table.appendChild(row);
 				}
 			} else {
@@ -198,6 +208,10 @@ function rechnungslaufAnwalt(lauf) {
 		callback: function(r) {
 			if (r.message) {
 				closeNav();
+				clearTable();
+				if (document.getElementById("myTable").classList.contains('hidden')) {
+					document.getElementById("myTable").classList.remove('hidden');
+				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
 					var table = document.getElementById("myTable");
@@ -210,6 +224,9 @@ function rechnungslaufAnwalt(lauf) {
 					cell_2.appendChild(cell_2_txt);
 					row.appendChild(cell_1);
 					row.appendChild(cell_2);
+					row.onclick = function() { 
+						window.location = '/desk#Form/Sales Invoice/' + r.message[i];
+					};
 					table.appendChild(row);
 				}
 			} else {
@@ -230,6 +247,10 @@ function rechnungslaufKanzlei(lauf) {
 		callback: function(r) {
 			if (r.message) {
 				closeNav();
+				clearTable();
+				if (document.getElementById("myTable").classList.contains('hidden')) {
+					document.getElementById("myTable").classList.remove('hidden');
+				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
 					var table = document.getElementById("myTable");
@@ -242,6 +263,9 @@ function rechnungslaufKanzlei(lauf) {
 					cell_2.appendChild(cell_2_txt);
 					row.appendChild(cell_1);
 					row.appendChild(cell_2);
+					row.onclick = function() { 
+						window.location = '/desk#Form/Sales Invoice/' + r.message[i];
+					};
 					table.appendChild(row);
 				}
 			} else {
@@ -260,4 +284,12 @@ function openNav() {
 /* Close */
 function closeNav() {
     document.getElementById("myNav").style.display = "none";
+}
+
+function clearTable() {
+	var tabelle = document.getElementById("myTable");
+	var rowCount = tabelle.rows.length;
+	for (var i = rowCount - 1; i > 0; i--) {
+		tabelle.deleteRow(i);
+	}
 }
