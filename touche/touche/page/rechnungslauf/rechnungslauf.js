@@ -9,7 +9,7 @@ frappe.pages['rechnungslauf'].on_page_load = function(wrapper) {
 	frappe.rechnungslauf.run(page);
 	
 	// add the application reference
-	frappe.breadcrumbs.add("Pflanzenfreund");
+	frappe.breadcrumbs.add("Touche");
 }
 
 frappe.rechnungslauf = {
@@ -32,15 +32,15 @@ function showMitgliedDetails() {
 	if (document.getElementById("mitglied-typ").classList.contains('hidden')) {
 		document.getElementById("mitglied-typ").classList.remove('hidden');
 	}
-	if (document.getElementById("end").classList.contains('hidden')) {
+	/* if (document.getElementById("end").classList.contains('hidden')) {
 		document.getElementById("end").classList.remove('hidden');
-	}
+	} */
 	if (document.getElementById("mitglied-typ-label").classList.contains('hidden')) {
 		document.getElementById("mitglied-typ-label").classList.remove('hidden');
 	}
-	if (document.getElementById("end-label").classList.contains('hidden')) {
+	/* if (document.getElementById("end-label").classList.contains('hidden')) {
 		document.getElementById("end-label").classList.remove('hidden');
-	}
+	} */
 }
 
 function showPartialMitgliedDetails() {
@@ -50,27 +50,27 @@ function showPartialMitgliedDetails() {
 	if (!document.getElementById("mitglied-typ-label").classList.contains('hidden')) {
 		document.getElementById("mitglied-typ-label").classList.add('hidden');
 	}
-	if (document.getElementById("end").classList.contains('hidden')) {
+	/* if (document.getElementById("end").classList.contains('hidden')) {
 		document.getElementById("end").classList.remove('hidden');
 	}
 	if (document.getElementById("end-label").classList.contains('hidden')) {
 		document.getElementById("end-label").classList.remove('hidden');
-	}
+	} */
 }
 
 function hideMitgliedDetails() {
 	if (!document.getElementById("mitglied-typ").classList.contains('hidden')) {
 		document.getElementById("mitglied-typ").classList.add('hidden');
 	}
-	if (!document.getElementById("end").classList.contains('hidden')) {
+	/* if (!document.getElementById("end").classList.contains('hidden')) {
 		document.getElementById("end").classList.add('hidden');
-	}
+	} */
 	if (!document.getElementById("mitglied-typ-label").classList.contains('hidden')) {
 		document.getElementById("mitglied-typ-label").classList.add('hidden');
 	}
-	if (!document.getElementById("end-label").classList.contains('hidden')) {
+	/* if (!document.getElementById("end-label").classList.contains('hidden')) {
 		document.getElementById("end-label").classList.add('hidden');
-	}
+	} */
 }
 
 function startRechnungslauf() {
@@ -130,13 +130,13 @@ function rechnungslaufAlle(lauf, end) {
 				if (document.getElementById("myTable").classList.contains('hidden')) {
 					document.getElementById("myTable").classList.remove('hidden');
 				}
-				console.log(r.message);
-				/* if (r.message.length == 1) {
-					for (i = 0; i < r.message.length; i++) {
+				//console.log(r.message);
+				for (y = 0; y < r.message.length; y++) {
+					for (i = 0; i < r.message[y].length; i++) {
 						var table = document.getElementById("myTable");
 						var row = document.createElement("tr");
 						var cell_1 = document.createElement("td");
-						var cell_1_txt = document.createTextNode(i);
+						var cell_1_txt = document.createTextNode(i + 1);
 						cell_1.appendChild(cell_1_txt);
 						var cell_2 = document.createElement("td");
 						var cell_2_txt = document.createTextNode(r.message[i]);
@@ -145,9 +145,7 @@ function rechnungslaufAlle(lauf, end) {
 						row.appendChild(cell_2);
 						table.appendChild(row);
 					}
-				} else {
-					
-				} */
+				}
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
@@ -168,7 +166,20 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 		callback: function(r) {
 			if (r.message) {
 				closeNav();
-				console.log(r.message);
+				//console.log(r.message);
+				for (i = 0; i < r.message.length; i++) {
+					var table = document.getElementById("myTable");
+					var row = document.createElement("tr");
+					var cell_1 = document.createElement("td");
+					var cell_1_txt = document.createTextNode(i + 1);
+					cell_1.appendChild(cell_1_txt);
+					var cell_2 = document.createElement("td");
+					var cell_2_txt = document.createTextNode(r.message[i]);
+					cell_2.appendChild(cell_2_txt);
+					row.appendChild(cell_1);
+					row.appendChild(cell_2);
+					table.appendChild(row);
+				}
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
@@ -187,7 +198,20 @@ function rechnungslaufAnwalt(lauf) {
 		callback: function(r) {
 			if (r.message) {
 				closeNav();
-				console.log(r.message);
+				//console.log(r.message);
+				for (i = 0; i < r.message.length; i++) {
+					var table = document.getElementById("myTable");
+					var row = document.createElement("tr");
+					var cell_1 = document.createElement("td");
+					var cell_1_txt = document.createTextNode(i + 1);
+					cell_1.appendChild(cell_1_txt);
+					var cell_2 = document.createElement("td");
+					var cell_2_txt = document.createTextNode(r.message[i]);
+					cell_2.appendChild(cell_2_txt);
+					row.appendChild(cell_1);
+					row.appendChild(cell_2);
+					table.appendChild(row);
+				}
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
@@ -206,7 +230,20 @@ function rechnungslaufKanzlei(lauf) {
 		callback: function(r) {
 			if (r.message) {
 				closeNav();
-				console.log(r.message);
+				//console.log(r.message);
+				for (i = 0; i < r.message.length; i++) {
+					var table = document.getElementById("myTable");
+					var row = document.createElement("tr");
+					var cell_1 = document.createElement("td");
+					var cell_1_txt = document.createTextNode(i + 1);
+					cell_1.appendChild(cell_1_txt);
+					var cell_2 = document.createElement("td");
+					var cell_2_txt = document.createTextNode(r.message[i]);
+					cell_2.appendChild(cell_2_txt);
+					row.appendChild(cell_1);
+					row.appendChild(cell_2);
+					table.appendChild(row);
+				}
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
