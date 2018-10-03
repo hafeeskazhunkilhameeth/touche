@@ -113,10 +113,12 @@ def create_invoice(customers, typ):
 	customer_name = ""
 	customer_address = ""
 	item = ""
+	rate = ""
 	invoice_txt = ""
 	invoices = []
 	
 	for customer in customers:
+		sales_invoice = frappe.new_doc("Sales Invoice")
 		if typ == "Mitglied":
 			customer_name = customer['name']
 			customer_address = get_default_address(doctype="Customer", name=customer_name)
@@ -126,23 +128,36 @@ def create_invoice(customers, typ):
 				item = "Familien-Mitglied Beitrag"
 			if customer['status_mitgliedschaft'] == "Kollektiv":
 				item = "Kollektiv-Mitglied Beitrag"
-		if typ == "Anwalt":
-			return
-		
-		if typ == "Kanzlei":
-			return
+			sales_invoice.update({
+				"customer": customer_name,
+				"customer_address": customer_address,
+				"shipping_address_name": customer_address,
+				"delivery_date": utils.today(),
+				"due_date": utils.add_days(utils.today(), 60),
+				"items": [{
+					"item_code": item,
+					"qty": "1"
+				}]
+			})
+			
+		else:
+			customer_name = customer['customer']
+			customer_address = get_default_address(doctype="Customer", name=customer_name)
+			item = "Solidaritätsbeitrag"
+			rate = customer['betrag']
+			sales_invoice.update({
+				"customer": customer_name,
+				"customer_address": customer_address,
+				"shipping_address_name": customer_address,
+				"delivery_date": utils.today(),
+				"due_date": utils.add_days(utils.today(), 60),
+				"items": [{
+					"item_code": item,
+					"qty": "1",
+					"rate": rate
+				}]
+			})
 	
-		sales_invoice = frappe.new_doc("Sales Invoice")
-		sales_invoice.update({
-			"customer": customer_name,
-			"customer_address": customer_address,
-			"shipping_address_name": customer_address,
-			"delivery_date": utils.today(),
-			"items": [{
-				"item_code": item,
-				"qty": "1"
-			}]
-		})
 		sales_invoice.flags.ignore_mandatory = True
 		sales_invoice.save(ignore_permissions=True)
 		referencenumber = sales_invoice.name.split("-")[1]
