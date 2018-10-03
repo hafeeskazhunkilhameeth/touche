@@ -143,7 +143,7 @@ def create_invoice(customers, typ):
 		else:
 			customer_name = customer['customer']
 			customer_address = get_default_address(doctype="Customer", name=customer_name)
-			item = "Solidaritätsbeitrag"
+			item = "Soli-Beitrag"
 			rate = customer['betrag']
 			sales_invoice.update({
 				"customer": customer_name,
