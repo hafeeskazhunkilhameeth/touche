@@ -127,7 +127,27 @@ function rechnungslaufAlle(lauf, end) {
 		callback: function(r) {
 			if (r.message) {
 				closeNav();
+				if (document.getElementById("myTable").classList.contains('hidden')) {
+					document.getElementById("myTable").classList.remove('hidden');
+				}
 				console.log(r.message);
+				/* if (r.message.length == 1) {
+					for (i = 0; i < r.message.length; i++) {
+						var table = document.getElementById("myTable");
+						var row = document.createElement("tr");
+						var cell_1 = document.createElement("td");
+						var cell_1_txt = document.createTextNode(i);
+						cell_1.appendChild(cell_1_txt);
+						var cell_2 = document.createElement("td");
+						var cell_2_txt = document.createTextNode(r.message[i]);
+						cell_2.appendChild(cell_2_txt);
+						row.appendChild(cell_1);
+						row.appendChild(cell_2);
+						table.appendChild(row);
+					}
+				} else {
+					
+				} */
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
