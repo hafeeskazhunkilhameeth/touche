@@ -136,10 +136,10 @@ function rechnungslaufAlle(lauf, end) {
 						var table = document.getElementById("myTable");
 						var row = document.createElement("tr");
 						var cell_1 = document.createElement("td");
-						var cell_1_txt = document.createTextNode(i + 1);
+						var cell_1_txt = document.createTextNode(String(y) + "." + String(i + 1));
 						cell_1.appendChild(cell_1_txt);
 						var cell_2 = document.createElement("td");
-						var cell_2_txt = document.createTextNode(r.message[i]);
+						var cell_2_txt = document.createTextNode(r.message[y][i]);
 						cell_2.appendChild(cell_2_txt);
 						row.appendChild(cell_1);
 						row.appendChild(cell_2);
