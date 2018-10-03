@@ -133,21 +133,9 @@ function rechnungslaufAlle(lauf, end) {
 				//console.log(r.message);
 				for (y = 0; y < r.message.length; y++) {
 					for (i = 0; i < r.message[y].length; i++) {
+						var pos = String(y + 1) + "." + String(i + 1);
 						var referenz = r.message[y][i];
-						var table = document.getElementById("myTable");
-						var row = document.createElement("tr");
-						var cell_1 = document.createElement("td");
-						var cell_1_txt = document.createTextNode(String(y + 1) + "." + String(i + 1));
-						cell_1.appendChild(cell_1_txt);
-						var cell_2 = document.createElement("td");
-						var cell_2_txt = document.createTextNode(r.message[y][i]);
-						cell_2.appendChild(cell_2_txt);
-						row.appendChild(cell_1);
-						row.appendChild(cell_2);
-						row.onclick = function() { 
-								window.location = '/desk#Form/Sales Invoice/' + referenz;
-						};
-						table.appendChild(row);
+						crateTableContentElement(pos, referenz);
 					}
 				}
 			} else {
@@ -176,21 +164,9 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
+					var pos = i + 1;
 					var referenz = r.message[i];
-					var table = document.getElementById("myTable");
-					var row = document.createElement("tr");
-					var cell_1 = document.createElement("td");
-					var cell_1_txt = document.createTextNode(i + 1);
-					cell_1.appendChild(cell_1_txt);
-					var cell_2 = document.createElement("td");
-					var cell_2_txt = document.createTextNode(r.message[i]);
-					cell_2.appendChild(cell_2_txt);
-					row.appendChild(cell_1);
-					row.appendChild(cell_2);
-					row.onclick = function() { 
-						window.location = '/desk#Form/Sales Invoice/' + referenz;
-					};
-					table.appendChild(row);
+					crateTableContentElement(pos, referenz);
 				}
 			} else {
 				closeNav();
@@ -216,21 +192,9 @@ function rechnungslaufAnwalt(lauf) {
 				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
+					var pos = i + 1;
 					var referenz = r.message[i];
-					var table = document.getElementById("myTable");
-					var row = document.createElement("tr");
-					var cell_1 = document.createElement("td");
-					var cell_1_txt = document.createTextNode(i + 1);
-					cell_1.appendChild(cell_1_txt);
-					var cell_2 = document.createElement("td");
-					var cell_2_txt = document.createTextNode(r.message[i]);
-					cell_2.appendChild(cell_2_txt);
-					row.appendChild(cell_1);
-					row.appendChild(cell_2);
-					row.onclick = function() { 
-						window.location = '/desk#Form/Sales Invoice/' + referenz;
-					};
-					table.appendChild(row);
+					crateTableContentElement(pos, referenz);
 				}
 			} else {
 				closeNav();
@@ -256,21 +220,9 @@ function rechnungslaufKanzlei(lauf) {
 				}
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
+					var pos = i + 1;
 					var referenz = r.message[i];
-					var table = document.getElementById("myTable");
-					var row = document.createElement("tr");
-					var cell_1 = document.createElement("td");
-					var cell_1_txt = document.createTextNode(i + 1);
-					cell_1.appendChild(cell_1_txt);
-					var cell_2 = document.createElement("td");
-					var cell_2_txt = document.createTextNode(r.message[i]);
-					cell_2.appendChild(cell_2_txt);
-					row.appendChild(cell_1);
-					row.appendChild(cell_2);
-					row.onclick = function() { 
-						window.location = '/desk#Form/Sales Invoice/' + referenz
-					};
-					table.appendChild(row);
+					crateTableContentElement(pos, referenz);
 				}
 			} else {
 				closeNav();
@@ -296,4 +248,21 @@ function clearTable() {
 	for (var i = rowCount - 1; i > 0; i--) {
 		tabelle.deleteRow(i);
 	}
+}
+
+function crateTableContentElement(pos, referenz) {
+	var table = document.getElementById("myTable");
+	var row = document.createElement("tr");
+	var cell_1 = document.createElement("td");
+	var cell_1_txt = document.createTextNode(pos);
+	cell_1.appendChild(cell_1_txt);
+	var cell_2 = document.createElement("td");
+	var cell_2_txt = document.createTextNode(referenz);
+	cell_2.appendChild(cell_2_txt);
+	row.appendChild(cell_1);
+	row.appendChild(cell_2);
+	row.onclick = function() { 
+		window.location = '/desk#Form/Sales Invoice/' + referenz
+	};
+	table.appendChild(row);
 }
