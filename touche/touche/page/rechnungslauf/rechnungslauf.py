@@ -168,5 +168,5 @@ def create_invoice(customers, typ):
 		sales_invoice.save(ignore_permissions=True)
 		sales_invoice.submit()
 		frappe.db.commit()
-		invoices.append(sales_invoice.name)
+		invoices.append([sales_invoice.name, item, sales_invoice.grand_total])
 	return invoices

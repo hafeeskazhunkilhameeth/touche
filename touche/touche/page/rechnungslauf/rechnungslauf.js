@@ -134,8 +134,10 @@ function rechnungslaufAlle(lauf, end) {
 				for (y = 0; y < r.message.length; y++) {
 					for (i = 0; i < r.message[y].length; i++) {
 						var pos = String(y + 1) + "." + String(i + 1);
-						var referenz = r.message[y][i];
-						crateTableContentElement(pos, referenz);
+						var referenz = r.message[y][i][0];
+						var mitglied_art = r.message[y][i][1];
+						var betrag = r.message[y][i][2];
+						crateTableContentElement(pos, referenz, mitglied_art, betrag);
 					}
 				}
 			} else {
@@ -165,8 +167,10 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
 					var pos = i + 1;
-					var referenz = r.message[i];
-					crateTableContentElement(pos, referenz);
+					var referenz = r.message[i][0];
+					var mitglied_art = r.message[i][1];
+					var betrag = r.message[i][2];
+					crateTableContentElement(pos, referenz, mitglied_art, betrag);
 				}
 			} else {
 				closeNav();
@@ -193,8 +197,10 @@ function rechnungslaufAnwalt(lauf) {
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
 					var pos = i + 1;
-					var referenz = r.message[i];
-					crateTableContentElement(pos, referenz);
+					var referenz = r.message[i][0];
+					var mitglied_art = r.message[i][1];
+					var betrag = r.message[i][2];
+					crateTableContentElement(pos, referenz, mitglied_art, betrag);
 				}
 			} else {
 				closeNav();
@@ -221,8 +227,10 @@ function rechnungslaufKanzlei(lauf) {
 				//console.log(r.message);
 				for (i = 0; i < r.message.length; i++) {
 					var pos = i + 1;
-					var referenz = r.message[i];
-					crateTableContentElement(pos, referenz);
+					var referenz = r.message[i][0];
+					var mitglied_art = r.message[i][1];
+					var betrag = r.message[i][2];
+					crateTableContentElement(pos, referenz, mitglied_art, betrag);
 				}
 			} else {
 				closeNav();
@@ -250,15 +258,26 @@ function clearTable() {
 	}
 }
 
-function crateTableContentElement(pos, referenz) {
+function crateTableContentElement(pos, referenz, mitglied_art, betrag) {
 	var table = document.getElementById("myTable");
 	var row = document.createElement("tr");
+	
 	var cell_1 = document.createElement("td");
 	var cell_1_txt = document.createTextNode(pos);
 	cell_1.appendChild(cell_1_txt);
+	
 	var cell_2 = document.createElement("td");
 	var cell_2_txt = document.createTextNode(referenz);
 	cell_2.appendChild(cell_2_txt);
+	
+	var cell_3 = document.createElement("td");
+	var cell_3_txt = document.createTextNode(mitglied_art);
+	cell_3.appendChild(cell_3_txt);
+	
+	var cell_4 = document.createElement("td");
+	var cell_4_txt = document.createTextNode(betrag);
+	cell_4.appendChild(cell_4_txt);
+	
 	row.appendChild(cell_1);
 	row.appendChild(cell_2);
 	row.onclick = function() { 
