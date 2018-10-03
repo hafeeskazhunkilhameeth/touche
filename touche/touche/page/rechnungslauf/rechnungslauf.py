@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 import frappe, os, json
 from frappe import throw, _
 from frappe import utils
+from frappe.contacts.doctype.address.address import get_default_address
+import esr
 
 @frappe.whitelist()
 def rechnungslauf(lauf=None, typ=None, end=None):
@@ -29,21 +31,25 @@ def rechnungslauf(lauf=None, typ=None, end=None):
 			["austritt", ">=", end or end_of_year]])
 			
 		mitglieder = mitglieder_ohne_austritt + mitglieder_mit_austritt
-		create_invoice(mitglieder)
+		mitglieder_rechnungen = create_invoice(mitglieder, "Mitglied")
 			
 		#anwalte
 		anwalte = frappe.get_list("Fachkontakt", fields=["customer", "betrag", "anrede"], filters =
 			[["rechnung", "=", "1"],
 			["typ", "=", "Jurist"],
 			["deaktiviert", "!=", "1"]])
+			
+		anwalt_rechnungen = create_invoice(anwalte, "Anwalt")
 		
 		#kanzleien
 		kanzleien = frappe.get_list("Fachkontakt", fields=["customer", "betrag", "anrede"], filters =
 			[["rechnung", "=", "1"],
 			["typ", "=", "Kanzlei"],
 			["deaktiviert", "!=", "1"]])
+			
+		kanzlei_rechnungen = create_invoice(kanzleien, "Kanzlei")
 		
-		return mitglieder, anwalte, kanzleien
+		return mitglieder_rechnungen, anwalt_rechnungen, kanzlei_rechnungen
 		
 	if lauf == "Mitglieder":
 		if typ == "Alle":
@@ -84,54 +90,68 @@ def rechnungslauf(lauf=None, typ=None, end=None):
 				["austritt", ">=", end or end_of_year]])
 		
 		mitglieder = mitglieder_ohne_austritt + mitglieder_mit_austritt
-		create_invoice(mitglieder)
-		return mitglieder
+		mitglieder_rechnungen = create_invoice(mitglieder, "Mitglied")
+		return mitglieder_rechnungen
 			
 	if lauf == "Anwalte":
 		anwalte = frappe.get_list("Fachkontakt", fields=["customer", "betrag", "anrede"], filters =
 			[["rechnung", "=", "1"],
 			["typ", "=", "Jurist"],
 			["deaktiviert", "!=", "1"]])
-		create_invoice(anwalte)
-		return anwalte
+		anwalt_rechnungen = create_invoice(anwalte, "Anwalt")
+		return anwalt_rechnungen
 			
 	if lauf == "Kanzleien":
 		kanzleien = frappe.get_list("Fachkontakt", fields=["customer", "betrag", "anrede"], filters =
 			[["rechnung", "=", "1"],
 			["typ", "=", "Kanzlei"],
 			["deaktiviert", "!=", "1"]])
-		create_invoice(kanzleien)
-		return kanzleien
+		kanzlei_rechnungen = create_invoice(kanzleien, "Kanzlei")
+		return kanzlei_rechnungen
 
-def create_invoice(customers):
-	# sales_invoice = frappe.new_doc("Sales Invoice")
-	# sales_invoice.update({
-		# "customer": customer,
-		# "customer_address": billing,
-		# "shipping_address_name": shipping,
-		# "delivery_date": utils.today(),
-		# "pflanzenfreund_abo": pflanzenfreund_abo.name,
-		# "taxes_and_charges": "Schweiz normal (302) - GCM",
-		# "items": [{
-			# "item_code": abo,
-			# "qty": "1"
-		# }],
-		# "taxes": [{
-			# "charge_type": "On Net Total",
-			# "account_head": "2200 - Umsatzsteuer - GCM",
-			# "cost_center": "Haupt - GCM",
-			# "rate": "7.7",
-			# "description": "Inkl. 7.7% MwSt"
-		# }]
-	# })
-	# sales_invoice.flags.ignore_mandatory = True
-	# sales_invoice.save(ignore_permissions=True)
-	# referencenumber = sales_invoice.name.split("-")[1]
-	# sales_invoice.update({
-		# "esr_reference": esr.get_reference_number(referencenumber),
-		# "esr_code": esr.generateCodeline(sales_invoice.grand_total, esr.get_reference_number(referencenumber), "013100113")
-	# })
-	# sales_invoice.save(ignore_permissions=True)
-	# sales_invoice.submit()
-# frappe.db.commit()
-	return
+def create_invoice(customers, typ):
+	customer_name = ""
+	customer_address = ""
+	item = ""
+	invoice_txt = ""
+	invoices = []
+	
+	for customer in customers:
+		if typ == "Mitglied":
+			customer_name = customer['name']
+			customer_address = get_default_address(doctype="Customer", name=customer_name)
+			if customer['status_mitgliedschaft'] == "Einzel":
+				item = "Einzel-Mitglied Beitrag"
+			if customer['status_mitgliedschaft'] == "Familie":
+				item = "Familien-Mitglied Beitrag"
+			if customer['status_mitgliedschaft'] == "Kollektiv":
+				item = "Kollektiv-Mitglied Beitrag"
+		if typ == "Anwalt":
+			return
+		
+		if typ == "Kanzlei":
+			return
+	
+		sales_invoice = frappe.new_doc("Sales Invoice")
+		sales_invoice.update({
+			"customer": customer_name,
+			"customer_address": customer_address,
+			"shipping_address_name": customer_address,
+			"delivery_date": utils.today(),
+			"items": [{
+				"item_code": item,
+				"qty": "1"
+			}]
+		})
+		sales_invoice.flags.ignore_mandatory = True
+		sales_invoice.save(ignore_permissions=True)
+		referencenumber = sales_invoice.name.split("-")[1]
+		sales_invoice.update({
+			"esr_reference": esr.get_reference_number(referencenumber),
+			"esr_code": esr.generateCodeline(sales_invoice.grand_total, esr.get_reference_number(referencenumber), "01154388")
+		})
+		sales_invoice.save(ignore_permissions=True)
+		sales_invoice.submit()
+		frappe.db.commit()
+		invoices.append(sales_invoice.name)
+	return invoices
