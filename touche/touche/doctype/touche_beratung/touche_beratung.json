@@ -1,7 +1,7 @@
 {
  "allow_copy": 0, 
  "allow_guest_to_view": 0, 
- "allow_import": 0, 
+ "allow_import": 1, 
  "allow_rename": 0, 
  "autoname": "Beratung-.######", 
  "beta": 0, 
@@ -449,7 +449,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2018-09-20 10:44:04.797316", 
+ "modified": "2019-01-07 10:49:56.070007", 
  "modified_by": "Administrator", 
  "module": "Touche", 
  "name": "Touche Beratung", 
