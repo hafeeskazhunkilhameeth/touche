@@ -1,0 +1,100 @@
+<div style="margin: 5px;">
+	<div class="section-body">
+		<div class="row">
+			<h3 style="padding-left: 15px;">Vorselektionierung</h3>
+			<div class="form-column col-sm-4">
+				<div class="form-group">
+					<label for="suchtyp">Suchtyp:</label>
+					<select class="form-control" id="suchtyp" onchange="changeSuchtyp()">
+						<option>Bitte Suchtyp auswählen</option>
+						<option>Fachkontakte</option>
+						<option>Kunden</option>
+					</select>
+				</div> 
+				<button class="btn btn-sm btn-primary btn-block hidden" id="load_btn" onclick="loadData()">Daten Laden</button>
+			</div>
+			<div class="form-column col-sm-8">
+			</div>
+		</div>
+		
+		<div class="row hidden" id="fachkontaktfilter">
+			<h3 style="padding-left: 15px;">Manuelle Filterung</h3>
+			<div class="form-column col-sm-6">
+				<input type="text" id="FirstNameInputFK" onkeyup="searchByFirstNameFK()" placeholder="Suche nach Vornamen..">
+			</div>
+			<div class="form-column col-sm-6">
+				<input type="text" id="LastNameInputFK" onkeyup="searchByLastNameFK()" placeholder="Suche nach Nachnamen..">
+			</div>
+			<div class="form-column col-sm-4">
+				<input type="text" id="typInput" onkeyup="searchByTyp()" placeholder="Suche nach Typ..">
+			</div>
+			<div class="form-column col-sm-4">
+				<input type="text" id="institutInput" onkeyup="searchByInstitut()" placeholder="Suche nach Institut..">
+			</div>
+			<div class="form-column col-sm-4">
+				<input type="text" id="fachgebietInput" onkeyup="searchByFachgebiet()" placeholder="Suche nach Fachgbiet..">
+			</div>
+			<div class="form-column col-sm-6">
+				<input type="text" id="plzInputFK" onkeyup="searchByPincodesFK()" placeholder="Suche nach Postleitzahlen..">
+			</div>
+			<div class="form-column col-sm-6">
+				<input type="text" id="cityInputFK" onkeyup="searchBycityFK()" placeholder="Suche nach Ortschaften..">
+			</div>
+		</div>
+		<div class="row hidden" id="fachkontakttabelle">
+			<div class="form-column col-sm-12">
+				<table id="myTableFK" style="width: 100%;">
+					<tr class="header">
+						<th style="width:15%;">Vorname</th>
+						<th style="width:15%;">Nachname</th>
+						<th style="width:10%;">Typ</th>
+						<th style="width:15%;">Institut</th>
+						<th style="width:25%;">Fachgebiet</th>
+						<th style="width:10%;">Postleitzahl</th>
+						<th style="width:10%;">Ort</th>
+					</tr>
+				</table> 
+			</div>
+		</div>
+		
+		<div class="row hidden" id="kundenfilter">
+			<h3 style="padding-left: 15px;">Manuelle Filterung</h3>
+			<div class="form-column col-sm-6">
+				<input type="text" id="FirstNameInput" onkeyup="searchByFirstName()" placeholder="Suche nach Vornamen..">
+			</div>
+			<div class="form-column col-sm-6">
+				<input type="text" id="LastNameInput" onkeyup="searchByLastName()" placeholder="Suche nach Nachnamen..">
+			</div>
+			<div class="form-column col-sm-4">
+				<input type="text" id="plzInput" onkeyup="searchByPincodes()" placeholder="Suche nach Postleitzahlen..">
+			</div>
+			<div class="form-column col-sm-4">
+				<input type="text" id="cityInput" onkeyup="searchBycity()" placeholder="Suche nach Ortschaften..">
+			</div>
+			<div class="form-column col-sm-4">
+				<input type="text" id="mitgliedschaftInput" onkeyup="searchByMitgliedschaft()" placeholder="Suche nach Status Mitgliedschaft..">
+			</div>
+		</div>
+		<div class="row hidden" id="kundentabelle">
+			<div class="form-column col-sm-12">
+				<table id="myTable" style="width: 100%;">
+					<tr class="header">
+						<th style="width:20%;">Vorname</th>
+						<th style="width:20%;">Nachname</th>
+						<th style="width:30%;">Status Mitgliedschaft</th>
+						<th style="width:10%;">Postleitzahl</th>
+						<th style="width:20%;">Ort</th>
+					</tr>
+				</table> 
+			</div>
+		</div>
+		
+	</div>
+</div>
+<div id="myNav" class="overlay">
+	<!-- Overlay content -->
+  <div class="overlay-content">
+    <p><i class="fa fa-spinner fa-spin" style="font-size:80px"></i></p>
+    <p>Bitte haben Sie einen Moment Geduld, die Daten werden aufbereitet.</p>
+  </div>
+</div>

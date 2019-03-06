@@ -1,0 +1,23 @@
+{
+ "content": null, 
+ "creation": "2019-03-06 11:54:53.348629", 
+ "docstatus": 0, 
+ "doctype": "Page", 
+ "idx": 0, 
+ "modified": "2019-03-06 11:55:04.245023", 
+ "modified_by": "Administrator", 
+ "module": "Touche", 
+ "name": "touche-suchmaske", 
+ "owner": "Administrator", 
+ "page_name": "Touche Suchmaske", 
+ "roles": [
+  {
+   "role": "All"
+  }
+ ], 
+ "script": null, 
+ "standard": "Yes", 
+ "style": null, 
+ "system_page": 0, 
+ "title": "Touche Suchmaske"
+}

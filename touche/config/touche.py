@@ -97,5 +97,22 @@ def get_data():
 					"is_query_report": True,
 				}
 			]
+		},
+		{
+			"label": _("Diverses"),
+			"items": [
+				{
+					"type": "report",
+					"name":"Adressen Mitglieder Zeitschrift",
+					"doctype": "Address",
+					"is_query_report": True,
+				},
+				{
+				   "type": "page",
+				   "name": "touche-suchmaske",
+				   "label": _("Suchmaske"),
+				   "description": _("Suchmaske")
+				}
+			]
 		}
 	]
