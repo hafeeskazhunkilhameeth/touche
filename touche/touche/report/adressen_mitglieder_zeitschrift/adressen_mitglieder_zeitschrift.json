@@ -1,0 +1,32 @@
+{
+ "add_total_row": 0, 
+ "apply_user_permissions": 1, 
+ "creation": "2019-03-06 10:48:24.232647", 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2019-03-06 10:48:24.232647", 
+ "modified_by": "Administrator", 
+ "module": "Touche", 
+ "name": "Adressen Mitglieder Zeitschrift", 
+ "owner": "Administrator", 
+ "ref_doctype": "Address", 
+ "report_name": "Adressen Mitglieder Zeitschrift", 
+ "report_type": "Script Report", 
+ "roles": [
+  {
+   "role": "Sales User"
+  }, 
+  {
+   "role": "Purchase User"
+  }, 
+  {
+   "role": "Maintenance User"
+  }, 
+  {
+   "role": "Accounts User"
+  }
+ ]
+}
