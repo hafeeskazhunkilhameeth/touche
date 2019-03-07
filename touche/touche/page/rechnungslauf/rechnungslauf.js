@@ -56,7 +56,6 @@ frappe.realtime.on("invoices", function(data) {
 			var betrag = invoices[y][2];
 			crateTableContentElement(pos, referenz, mitglied_art, betrag);
 		}
-		document.getElementById("start_btn").classList.add("hidden");
 		document.getElementById("pdf_btn").classList.remove("hidden");
 	} else {
 		let progress_bar = document.getElementById("rechnungsprogress");
