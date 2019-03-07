@@ -7,9 +7,11 @@ frappe.pages['rechnungslauf'].on_page_load = function(wrapper) {
 	
 	frappe.rechnungslauf.make(page);
 	frappe.rechnungslauf.run(page);
+	page.job_content = $(page.body).find('#placeForWorkers');
 	
 	// add the application reference
 	frappe.breadcrumbs.add("Touche");
+	
 }
 
 frappe.rechnungslauf = {
@@ -24,9 +26,94 @@ frappe.rechnungslauf = {
 
 	},
 	run: function(page) {
- 
+		 
 	}
 }
+
+frappe.realtime.on("invoice_progress", function(data) {
+	if (data.progress) {
+		//console.log(data.progress);
+		let progress_bar = document.getElementById("rechnungsprogress");
+			if (progress_bar) {
+				$(progress_bar).removeClass("progress-bar-danger").addClass("progress-bar-success progress-bar-striped");
+				$(progress_bar).css("width", data.progress+"%");
+			}
+	}
+});
+frappe.realtime.on("invoices", function(data) {
+	if (data.invoices) {
+		clearTable();
+		if (document.getElementById("myTable").classList.contains('hidden')) {
+			document.getElementById("myTable").classList.remove('hidden');
+		}
+
+		var invoices = data.invoices;
+		//console.log(invoices);
+		for (y = 0; y < invoices.length; y++) {
+			var pos = String(y + 1);
+			var referenz = invoices[y][0];
+			var mitglied_art = invoices[y][1];
+			var betrag = invoices[y][2];
+			crateTableContentElement(pos, referenz, mitglied_art, betrag);
+		}
+		document.getElementById("start_btn").classList.add("hidden");
+		document.getElementById("pdf_btn").classList.remove("hidden");
+	} else {
+		let progress_bar = document.getElementById("rechnungsprogress");
+			if (progress_bar) {
+				$(progress_bar).removeClass("progress-bar-danger").addClass("progress-bar-success progress-bar-striped");
+				$(progress_bar).css("width", data.progress+"%");
+			}
+		frappe.msgprint("Es wurden keine Rechnungen erstellt");
+	}
+});
+frappe.realtime.on("pdf_progress", function(data) {
+	if (data.progress) {
+		//console.log(data.progress);
+		let progress_bar = document.getElementById("rechnungsprogress");
+			if (progress_bar) {
+				$(progress_bar).removeClass("progress-bar-danger").addClass("progress-bar-success progress-bar-striped");
+				$(progress_bar).css("width", data.progress+"%");
+			}
+		frappe.pages.rechnungslauf.refresh_jobs();
+	}
+});
+frappe.realtime.on("print_progress", function(data) {
+	if (data.progress) {
+		//console.log(data.progress);
+		let progress_bar = document.getElementById("printprogress");
+			if (progress_bar) {
+				$(progress_bar).parent().removeClass("hidden");
+				$(progress_bar).addClass("progress-bar-success progress-bar-striped");
+				$(progress_bar).css("width", data.progress+"%");
+			}
+	}
+});
+
+/* frappe.pages['rechnungslauf'].on_page_show = function(wrapper) {
+	
+} */
+
+frappe.pages.rechnungslauf.refresh_jobs = function() {
+	var page = frappe.pages.rechnungslauf.page;
+
+	// don't call if already waiting for a response
+	if(page.called) return;
+	page.called = true;
+	frappe.call({
+		method: 'touche.touche.page.rechnungslauf.rechnungslauf.list_all_pdfs',
+		callback: function(r) {
+			page.called = false;
+			page.body.find('.list-jobs').remove();
+			$(frappe.render_template('background_jobs', {onlyfiles:r.message || []})).appendTo(page.job_content);
+
+			if(frappe.get_route()[0]==='rechnungslauf') {
+				frappe.background_jobs_timeout = setTimeout(frappe.pages.rechnungslauf.refresh_jobs, 2000);
+			}
+		}
+	});
+}
+
 
 function showMitgliedDetails() {
 	if (document.getElementById("mitglied-typ").classList.contains('hidden')) {
@@ -79,9 +166,7 @@ function startRechnungslauf() {
 	var end = document.getElementById("end").value;
 	var confirmText = "";
 	
-	if (document.getElementById('alle').checked) {
-		lauf = "Alle";
-	} else if (document.getElementById('mitglieder').checked) {
+	if (document.getElementById('mitglieder').checked) {
 		lauf = "Mitglieder";
 	} else if (document.getElementById('anwalt').checked) {
 		lauf = "Anwalte";
@@ -89,7 +174,7 @@ function startRechnungslauf() {
 		lauf = "Kanzleien";
 	}
 	
-	if ((lauf == "Alle") || (lauf == "Mitglieder")) {
+	if (lauf == "Mitglieder") {
 		confirmText = "Sie haben folgende Auswahl getroffen, möchten Sie den Rechnungslauf starten?<br><b>Rechnungslauf für: </b> " + lauf +
 			"<br><b>Mitglied Typ: </b> " + mitglied_typ;
 	} else {
@@ -116,7 +201,7 @@ function startRechnungslauf() {
 }
 
 function rechnungslaufAlle(lauf, end) {
-	openNav();
+	//openNav();
 	frappe.call({
 		method: 'touche.touche.page.rechnungslauf.rechnungslauf.rechnungslauf',
 		args: {
@@ -124,9 +209,9 @@ function rechnungslaufAlle(lauf, end) {
 			'end': end
 		},
 		callback: function(r) {
-			if (r.message) {
+			/* if (r.message) {
 				closeNav();
-				clearTable();
+				/* clearTable();
 				if (document.getElementById("myTable").classList.contains('hidden')) {
 					document.getElementById("myTable").classList.remove('hidden');
 				}
@@ -139,17 +224,17 @@ function rechnungslaufAlle(lauf, end) {
 						var betrag = r.message[y][i][2];
 						crateTableContentElement(pos, referenz, mitglied_art, betrag);
 					}
-				}
+				} 
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
-			}
+			} */
 		}
 	});
 }
 
 function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
-	openNav();
+	//openNav();
 	frappe.call({
 		method: 'touche.touche.page.rechnungslauf.rechnungslauf.rechnungslauf',
 		args: {
@@ -158,7 +243,7 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 			'typ': mitglied_typ
 		},
 		callback: function(r) {
-			if (r.message) {
+			/* if (r.message) {
 				closeNav();
 				clearTable();
 				if (document.getElementById("myTable").classList.contains('hidden')) {
@@ -175,20 +260,20 @@ function rechnungslaufMitglieder(lauf, end, mitglied_typ) {
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
-			}
+			} */
 		}
 	});
 }
 
 function rechnungslaufAnwalt(lauf) {
-	openNav();
+	//openNav();
 	frappe.call({
 		method: 'touche.touche.page.rechnungslauf.rechnungslauf.rechnungslauf',
 		args: {
 			'lauf': lauf
 		},
 		callback: function(r) {
-			if (r.message) {
+			/* if (r.message) {
 				closeNav();
 				clearTable();
 				if (document.getElementById("myTable").classList.contains('hidden')) {
@@ -205,20 +290,20 @@ function rechnungslaufAnwalt(lauf) {
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
-			}
+			} */
 		}
 	});
 }
 
 function rechnungslaufKanzlei(lauf) {
-	openNav();
+	//openNav();
 	frappe.call({
 		method: 'touche.touche.page.rechnungslauf.rechnungslauf.rechnungslauf',
 		args: {
 			'lauf': lauf
 		},
 		callback: function(r) {
-			if (r.message) {
+			/* if (r.message) {
 				closeNav();
 				clearTable();
 				if (document.getElementById("myTable").classList.contains('hidden')) {
@@ -235,7 +320,7 @@ function rechnungslaufKanzlei(lauf) {
 			} else {
 				closeNav();
 				frappe.msgprint('Es wurde nichts gefunden, das den Kriterien entspricht.', 'Kein Output');
-			}
+			} */
 		}
 	});
 }
@@ -286,4 +371,43 @@ function crateTableContentElement(pos, referenz, mitglied_art, betrag) {
 		window.location = '/desk#Form/Sales Invoice/' + referenz
 	};
 	table.appendChild(row);
+}
+
+function createBindPDF() {
+	var rechnungsdatum = frappe.datetime.get_today();
+	frappe.confirm(
+		"Wollen Sie ein Sammel-PDF aller gültigen Rechnungen mit dem Valuta-Datum " + rechnungsdatum + " erstellen?",
+		function(){
+			//frappe.msgprint("Der Job wurde dem Background-Worker übergeben.");
+			startCreateBindPDF();
+		},
+		function(){
+			return false;
+		}
+	)
+}
+
+function startCreateBindPDF() {
+	frappe.call({
+		method: 'touche.touche.page.rechnungslauf.rechnungslauf.createSammelPDF',
+		args: {},
+		callback: function(r) {}
+	});
+}
+
+function deleteAllPDF() {
+	frappe.confirm(
+		"Wollen Sie alle oben aufgeführten PDF's vom Server entfernen?",
+		function(){
+			frappe.call({
+				method: 'touche.touche.page.rechnungslauf.rechnungslauf.remove_downloaded_pdf',
+				callback: function(r) {
+					frappe.msgprint("Die PDF's wurden entfernt");
+				}
+			});
+		},
+		function(){
+			return false;
+		}
+	)
 }

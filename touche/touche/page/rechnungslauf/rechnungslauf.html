@@ -1,15 +1,32 @@
 <div style="margin: 5px;">
 	<div class="section-body">
+		<div class="progress" title="Fortschritt"
+		style="margin-bottom: 4px;">
+			<div class="progress-bar" role="progressbar" id="rechnungsprogress"
+				aria-valuenow="0"
+				aria-valuemin="0" aria-valuemax="100"
+				style="width: 0%">
+			</div>
+		</div>
+		<div class="progress hidden" title="Fortschritt"
+		style="margin-bottom: 4px;">
+			<div class="progress-bar" role="progressbar" id="printprogress"
+				aria-valuenow="0"
+				aria-valuemin="0" aria-valuemax="100"
+				style="width: 0%">
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-sm-3">
-				<button class="btn btn-primary btn-sm primary-action" style="margin-left: 15px; margin-top: 15px;" onclick="startRechnungslauf()"><span>Start Rechnungslauf</span></button>
+				<button class="btn btn-primary btn-sm primary-action" style="margin-left: 15px; margin-top: 15px;" id="start_btn" onclick="startRechnungslauf()"><span>Start Rechnungslauf</span></button>
+				<button class="btn btn-primary btn-sm primary-action hidden" style="margin-left: 15px; margin-top: 15px;" id="pdf_btn" onclick="createBindPDF()"><span>Erstelle PDFs</span></button>
 			</div>
 			<div class="col-sm-3">
-				<div class="radio">
+				<!-- <div class="radio">
 					<label><input type="radio" name="optradio" onclick="showPartialMitgliedDetails()" id="alle" checked>Alle</label>
-				</div>
+				</div> -->
 				<div class="radio">
-					<label><input type="radio" name="optradio" onclick="showMitgliedDetails()" id="mitglieder">Mitglieder</label>
+					<label><input type="radio" name="optradio" onclick="showMitgliedDetails()" id="mitglieder" checked>Mitglieder</label>
 				</div>
 				<div class="radio">
 					<label><input type="radio" name="optradio" onclick="hideMitgliedDetails()" id="anwalt">Anwälte</label>
@@ -48,6 +65,11 @@
 			</div>
 			<div class="col-sm-1"></div>
 		</div>
+		<div class="row">
+			<div class="col-sm-2"></div>
+			<div class="col-sm-8"><div id="placeForWorkers"></div></div>
+			<div class="col-sm-2"></div>
+</div>
 		<div class="row">
 			<div class="form-column col-sm-12">
 				<table class="hidden" id="myTable" style="width: 100%;">

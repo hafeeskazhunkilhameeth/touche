@@ -29,8 +29,8 @@ def generateCodeline(betrag, referenceNumber, participantNumber):
 	if len(str(_rappen)) == 3:
 		_rappen = str(_rappen) + "0"
 		
-	if len(referenceNumber) < 27:  # check if referenceNumber has less than 27 chars
-		referenceNumber = (27-len(referenceNumber))*"0" + referenceNumber
+	if len(referenceNumber) < 26:  # check if referenceNumber has less than 27 chars
+		referenceNumber = (26-len(referenceNumber))*"0" + referenceNumber
 			
 	chf = str(int(franken))
 	rappen = str(_rappen).split(".")[1]
@@ -47,6 +47,14 @@ def generateCodeline(betrag, referenceNumber, participantNumber):
 	return bc + chf + rappen + p1 + help1 + referenceNumber + p2 + help2 + " " + participantNumber + help3
 
 def get_reference_number(referenceNumber):
-	if len(referenceNumber) < 27:  # check if referenceNumber has less than 27 chars
-		referenceNumber = (27-len(referenceNumber))*"0" + referenceNumber
-	return referenceNumber
+	if len(referenceNumber) < 26:  # check if referenceNumber has less than 27 chars
+		referenceNumber = (26-len(referenceNumber))*"0" + referenceNumber
+	p2 = moduloTenRecursive(referenceNumber)
+	return referenceNumber + p2
+	
+def korrektur():
+	invoices = frappe.db.sql("""SELECT `name` FROM `tabSales Invoice`""", as_list=True)
+	for _invoice in invoices:
+		invoice = frappe.get_doc("Sales Invoice", _invoice[0])
+		invoice.cancel()
+		invoice.delete()
