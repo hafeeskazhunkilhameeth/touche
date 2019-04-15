@@ -175,7 +175,7 @@ def _create_invoice(customers, typ):
 			referencenumber = sales_invoice.name.split("-")[1]
 			sales_invoice.update({
 				"esr_reference": esr.get_reference_number(referencenumber),
-				"esr_code": esr.generateCodeline(sales_invoice.grand_total, referencenumber, "01154388")
+				"esr_code": esr.generateCodeline(sales_invoice.grand_total, referencenumber, "010154388")
 			})
 			sales_invoice.save(ignore_permissions=True)
 			sales_invoice.submit()
