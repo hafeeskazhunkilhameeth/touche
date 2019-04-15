@@ -208,7 +208,7 @@ def remove_downloaded_pdf():
 @frappe.whitelist()
 def createSammelPDF():
 	frappe.publish_realtime("pdf_progress", {"progress": "0"}, user=frappe.session.user)
-	enqueue(_createSammelPDF, queue='default', timeout=6000, event='Generierung Sammel-PDF', valuta=utils.today(), printformat='Mitglieder Rechnung')
+	enqueue(_createSammelPDF, queue='default', timeout=6000, event='Generierung Sammel-PDF', valuta=utils.today(), printformat='Rechnungen Massendruck')
 	#frappe.msgprint(_('''Die PDFs werden erstellt.'''))
 	
 def _createSammelPDF(valuta, printformat):
