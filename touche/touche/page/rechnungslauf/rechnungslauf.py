@@ -7,6 +7,7 @@ from touche import esr
 from frappe.utils.background_jobs import enqueue
 from datetime import datetime
 from PyPDF2 import PdfFileWriter
+from touche.scripts.esr_print import get_print
 
 @frappe.whitelist()
 def rechnungslauf(lauf=None, typ=None, end=None):
@@ -211,7 +212,7 @@ def createSammelPDF():
 	enqueue(_createSammelPDF, queue='default', timeout=6000, event='Generierung Sammel-PDF', valuta=utils.today(), printformat='Rechnungen Massendruck')
 	#frappe.msgprint(_('''Die PDFs werden erstellt.'''))
 	
-def _createSammelPDF(valuta, printformat):
+def _createSammelPDF(valuta, printformat='Rechnungen Massendruck'):
 	sql_query = ("""SELECT `name` FROM `tabSales Invoice` WHERE `posting_date` = '{0}' AND `docstatus` = 1""".format(valuta))
 	sinvs = frappe.db.sql(sql_query, as_dict=True)
 	#frappe.msgprint(str(len(sinvs)))
@@ -251,7 +252,7 @@ def print_bind(sales_invoices, format=None, dest=None):
 	output = PdfFileWriter()
 	progress = 0
 	for sales_invoice in sales_invoices:
-		output = frappe.get_print("Sales Invoice", sales_invoice, format, as_pdf = True, output = output)
+		output = get_print("Sales Invoice", sales_invoice.name, format, as_pdf = True, output = output)
 		print("append to output")
 		progress += 1
 		frappe.publish_realtime("print_progress", {"progress": str(int(progress * 100/len(sales_invoices)))}, user=frappe.session.user)
