@@ -387,9 +387,15 @@ function createBindPDF() {
 }
 
 function startCreateBindPDF() {
+	var _printformat = 'Mitglied';
+	if (document.getElementById('anwalt').checked) {
+		_printformat = 'Anwalt';
+	}
 	frappe.call({
 		method: 'touche.touche.page.rechnungslauf.rechnungslauf.createSammelPDF',
-		args: {},
+		args: {
+			'printformat': _printformat
+		},
 		callback: function(r) {}
 	});
 }
