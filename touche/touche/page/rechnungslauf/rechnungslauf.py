@@ -207,12 +207,16 @@ def remove_downloaded_pdf():
 
 
 @frappe.whitelist()
-def createSammelPDF():
+def createSammelPDF(printformat):
+	if printformat == "Anwalt":
+		_printformat = 'Soli Rechnungen Massendruck'
+	else:
+		_printformat = 'Rechnungen Massendruck'
 	frappe.publish_realtime("pdf_progress", {"progress": "0"}, user=frappe.session.user)
-	enqueue(_createSammelPDF, queue='default', timeout=6000, event='Generierung Sammel-PDF', valuta=utils.today(), printformat='Rechnungen Massendruck')
+	enqueue(_createSammelPDF, queue='default', timeout=6000, event='Generierung Sammel-PDF', valuta=utils.today(), printformat=_printformat)
 	#frappe.msgprint(_('''Die PDFs werden erstellt.'''))
 	
-def _createSammelPDF(valuta, printformat='Rechnungen Massendruck'):
+def _createSammelPDF(valuta, printformat):
 	sql_query = ("""SELECT `name` FROM `tabSales Invoice` WHERE `posting_date` = '{0}' AND `docstatus` = 1""".format(valuta))
 	sinvs = frappe.db.sql(sql_query, as_dict=True)
 	#frappe.msgprint(str(len(sinvs)))
