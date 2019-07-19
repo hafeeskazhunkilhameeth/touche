@@ -179,7 +179,8 @@ def _create_invoice(customers, typ):
 				"esr_code": esr.generateCodeline(sales_invoice.grand_total, referencenumber, "010154388")
 			})
 			sales_invoice.save(ignore_permissions=True)
-			sales_invoice.submit()
+			# only save as draft!
+			#sales_invoice.submit()
 			frappe.db.commit()
 			invoices.append([sales_invoice.name, item, sales_invoice.grand_total])
 			created_records += 1
@@ -217,7 +218,7 @@ def createSammelPDF(printformat):
 	#frappe.msgprint(_('''Die PDFs werden erstellt.'''))
 	
 def _createSammelPDF(valuta, printformat):
-	sql_query = ("""SELECT `name` FROM `tabSales Invoice` WHERE `posting_date` = '{0}' AND `docstatus` = 1""".format(valuta))
+	sql_query = ("""SELECT `name` FROM `tabSales Invoice` WHERE `posting_date` = '{0}' AND `docstatus` = 0""".format(valuta))
 	sinvs = frappe.db.sql(sql_query, as_dict=True)
 	#frappe.msgprint(str(len(sinvs)))
 	print_sinv = []
@@ -225,6 +226,10 @@ def _createSammelPDF(valuta, printformat):
 	qty_controller = 0
 	progress = 0
 	for sinv in sinvs:
+		# submit draft sinv
+		doc = frappe.get_doc("Sales Invoice", sinv)
+		doc.submit()
+		frappe.db.commit()
 		progress += 1
 		print_sinv.append(sinv)
 		qty_controller += 1
