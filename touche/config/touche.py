@@ -95,6 +95,12 @@ def get_data():
 					"name":"General Ledger",
 					"doctype": "GL Entry",
 					"is_query_report": True,
+				},
+				{
+					"type": "report",
+					"name":"Vereinnahmte ER",
+					"doctype": "Sales Invoice",
+					"is_query_report": True,
 				}
 			]
 		},
