@@ -217,6 +217,49 @@ def createSammelPDF(printformat):
 	enqueue(_createSammelPDF, queue='default', timeout=6000, event='Generierung Sammel-PDF', valuta=utils.today(), printformat=_printformat)
 	#frappe.msgprint(_('''Die PDFs werden erstellt.'''))
 	
+@frappe.whitelist()
+def createSammelPDFmahnung(printformat):
+	_printformat = printformat
+	frappe.publish_realtime("pdf_progress", {"progress": "0"}, user=frappe.session.user)
+	enqueue(_createSammelPDFmahnung, queue='default', timeout=6000, event='Generierung Mahnungs-Sammel-PDF', valuta=utils.today(), printformat=_printformat)
+	#frappe.msgprint(_('''Die PDFs werden erstellt.'''))
+	
+def _createSammelPDFmahnung(valuta, printformat):
+	sql_query = ("""SELECT `name` FROM `tabSales Invoice` WHERE `posting_date` <= '{0}' AND `docstatus` = 1 AND `status` != 'Paid'""".format(valuta))
+	sinvs = frappe.db.sql(sql_query, as_dict=True)
+	#frappe.msgprint(str(len(sinvs)))
+	print_sinv = []
+	loop_controller = 1
+	qty_controller = 0
+	progress = 0
+	for sinv in sinvs:
+		# submit draft sinv
+		#doc = frappe.get_doc("Sales Invoice", sinv)
+		#doc.submit()
+		#frappe.db.commit()
+		progress += 1
+		print_sinv.append(sinv)
+		qty_controller += 1
+		if qty_controller == 100:
+			# run bind job for 100 batch
+			if len(print_sinv) > 0:
+				now = datetime.now()
+				bind_source = "/assets/touche/sinvs_for_print/mahnungs_sammel_pdf_vom_{valuta}-{loop}.pdf".format(valuta=valuta, loop=loop_controller)
+				physical_path = "/home/frappe/frappe-bench/sites" + bind_source
+				print_bind(print_sinv, format=printformat, dest=str(physical_path))
+				qty_controller = 0
+				loop_controller += 1
+				print_sinv = []
+				frappe.publish_realtime("pdf_progress", {"progress": str(int(progress * 100/len(sinvs)))}, user=frappe.session.user)
+				
+	# run bind job for rest batch
+	if len(print_sinv) > 0:
+		now = datetime.now()
+		bind_source = "/assets/touche/sinvs_for_print/mahnungs_sammel_pdf_vom_{valuta}-{loop}.pdf".format(valuta=valuta, loop=loop_controller)
+		physical_path = "/home/frappe/frappe-bench/sites" + bind_source
+		print_bind(print_sinv, format=printformat, dest=str(physical_path))
+		frappe.publish_realtime("pdf_progress", {"progress": str(int(progress * 100/len(sinvs)))}, user=frappe.session.user)
+	
 def _createSammelPDF(valuta, printformat):
 	sql_query = ("""SELECT `name` FROM `tabSales Invoice` WHERE `posting_date` = '{0}' AND `docstatus` = 0""".format(valuta))
 	sinvs = frappe.db.sql(sql_query, as_dict=True)

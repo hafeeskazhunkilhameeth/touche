@@ -386,6 +386,31 @@ function createBindPDF() {
 	)
 }
 
+function createBindPDF_mahnung() {
+	var rechnungsdatum = frappe.datetime.get_today();
+	frappe.confirm(
+		"Wollen Sie ein Mahnungs-Sammel-PDF, aller gültigen Rechnungen mit dem Valuta-Datum " + rechnungsdatum + ", die noch ausstehend sind, erstellen?",
+		function(){
+			//frappe.msgprint("Der Job wurde dem Background-Worker übergeben.");
+			startCreateBindPDF_mahnung();
+		},
+		function(){
+			return false;
+		}
+	)
+}
+
+function startCreateBindPDF_mahnung() {
+	var _printformat = 'Mahnung';
+	frappe.call({
+		method: 'touche.touche.page.rechnungslauf.rechnungslauf.createSammelPDFmahnung',
+		args: {
+			'printformat': _printformat
+		},
+		callback: function(r) {}
+	});
+}
+
 function startCreateBindPDF() {
 	var _printformat = 'Mitglied';
 	if (document.getElementById('anwalt').checked) {
