@@ -5,15 +5,15 @@ frappe.query_reports["Vereinnahmte ER"] = {
 	"filters": [
 
 	],
-	"formatter":function (row, cell, value, columnDef, dataContext, default_formatter) {
-		value = default_formatter(row, cell, value, columnDef, dataContext);
-		if (columnDef.id == __("Konto") && (dataContext["Konto"] == "3 - Erträge" || dataContext["Konto"] == "4 - Aufwände" || dataContext["Konto"] == "Total" || dataContext["Konto"] == "Gewinn / Verlust")) {
-				value = "<span style='font-weight:bold!important;'>" + value + "</span>";
-				_row = true;
+	"formatter": function(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+
+		if ((data["Konto"] == "3 - Erträge")||(data["Konto"] == "Total")||(data["Konto"] == "4 - Aufwände")||(data["Konto"] == "Gewinn / Verlust")) {
+			value = $(`<span>${value}</span>`);
+			var $value = $(value).css("font-weight", "bold");
+			value = $value.wrap("<p></p>").parent().html();
 		}
-		if (row == 7 || row == 31 || row == 33) {
-			value = "<span style='font-weight:bold!important;'>" + value + "</span>";
-		}
+
 		return value;
 	}
 }
