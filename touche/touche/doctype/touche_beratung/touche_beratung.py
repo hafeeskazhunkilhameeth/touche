@@ -20,21 +20,21 @@ def getSummeAufwand(self):
 	for entry in self.get("beratungs_timesheet"):
 		time = time + int(entry.dauer_in_min)
 		
-	if time > 60:
-		while time >= 60:
+	if int(time) > 60:
+		while int(time) >= 60:
 			hh = hh + 1
-			time = time - 60
-		if time < 10:
+			time = int(time) - 60
+		if int(time) < 10:
 			time = "0" + str(time)
-		mm = time
+		mm = int(time)
 	else:
-		if time == 60:
+		if int(time) == 60:
 			hh = 1
 			time = "00"
 		else:
 			hh = 0
-		if time < 10:
+		if int(time) < 10:
 			time = "0" + str(time)
-		mm = time
+		mm = int(time)
 		
 	self.summe_aufwand = str(hh) + ":" + str(mm)
