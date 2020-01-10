@@ -59,7 +59,7 @@ def execute(filters=None):
 	
 	for ertrag in _ertrag:
 		if ertrag[2] == 0:
-		    data.append([ertrag[0], ertrag[1], ertrag[2], "{0:.2f}".format(0) * ertrag[1])) + "%"])
+		    data.append([ertrag[0], ertrag[1], ertrag[2], "{0:.2f}".format(0) + "%"])
 		else:
 		    data.append([ertrag[0], ertrag[1], ertrag[2], "{0:.2f}".format(((100/ertrag[2]) * ertrag[1])) + "%"])
 		
