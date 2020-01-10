@@ -58,17 +58,32 @@ def execute(filters=None):
 	data.append(["3 - Erträge", "", "", ""])
 	
 	for ertrag in _ertrag:
-		data.append([ertrag[0], ertrag[1], ertrag[2], "{0:.2f}".format(((100/ertrag[2]) * ertrag[1])) + "%"])
+		if ertrag[2] == 0:
+		    data.append([ertrag[0], ertrag[1], ertrag[2], "{0:.2f}".format(0) * ertrag[1])) + "%"])
+		else:
+		    data.append([ertrag[0], ertrag[1], ertrag[2], "{0:.2f}".format(((100/ertrag[2]) * ertrag[1])) + "%"])
 		
-	data.append(["Total", ertrag_summe, gl_ertrag_summe, "{0:.2f}".format(((100/gl_ertrag_summe) * ertrag_summe)) + "%"])
+	if gl_ertrag_summe == 0:
+	    data.append(["Total", ertrag_summe, gl_ertrag_summe, "{0:.2f}".format(0) + "%"])
+	else:
+	    data.append(["Total", ertrag_summe, gl_ertrag_summe, "{0:.2f}".format(((100/gl_ertrag_summe) * ertrag_summe)) + "%"])
 	data.append(["", "", "", ""])
 	
 	data.append(["4 - Aufwände", "", "", ""])
 	for aufwand in _aufwand:
-		data.append([aufwand[0], aufwand[1], aufwand[2], "{0:.2f}".format(((100/aufwand[2]) * aufwand[1])) + "%"])
+		if aufwand[2] == 0:
+		    data.append([aufwand[0], aufwand[1], aufwand[2], "{0:.2f}".format(0) + "%"])
+		else:
+		    data.append([aufwand[0], aufwand[1], aufwand[2], "{0:.2f}".format(((100/aufwand[2]) * aufwand[1])) + "%"])
 		
-	data.append(["Total", aufwand_summe, gl_aufwand_summe, "{0:.2f}".format(((100/gl_aufwand_summe) * aufwand_summe)) + "%"])
+	if gl_aufwand_summe == 0:
+	    data.append(["Total", aufwand_summe, gl_aufwand_summe, "{0:.2f}".format(0) + "%"])
+	else:
+	    data.append(["Total", aufwand_summe, gl_aufwand_summe, "{0:.2f}".format(((100/gl_aufwand_summe) * aufwand_summe)) + "%"])
 	data.append(["", "", "", ""])
-	data.append(["Gewinn / Verlust", ertrag_summe + aufwand_summe, gl_ertrag_summe + gl_aufwand_summe, "{0:.2f}".format(((100/(gl_ertrag_summe + gl_aufwand_summe)) * (ertrag_summe + aufwand_summe))) + "%"])
+	if gl_ertrag_summe == 0 and gl_aufwand_summe == 0:
+	    data.append(["Gewinn / Verlust", ertrag_summe + aufwand_summe, gl_ertrag_summe + gl_aufwand_summe, "{0:.2f}".format(0) + "%"])
+	else:
+	    data.append(["Gewinn / Verlust", ertrag_summe + aufwand_summe, gl_ertrag_summe + gl_aufwand_summe, "{0:.2f}".format(((100/(gl_ertrag_summe + gl_aufwand_summe)) * (ertrag_summe + aufwand_summe))) + "%"])
 	
 	return columns, data
