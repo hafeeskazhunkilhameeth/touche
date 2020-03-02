@@ -88,19 +88,19 @@ def get_data():
 					"icon": "fa fa-sitemap",
 					"label": _("Chart of Accounts"),
 					"route": "Tree/Account",
-					"description": _("Tree of financial accounts."),
+					"description": _("Tree of financial accounts.")
 				},
 				{
 					"type": "report",
 					"name":"General Ledger",
 					"doctype": "GL Entry",
-					"is_query_report": True,
+					"is_query_report": True
 				},
 				{
 					"type": "report",
 					"name":"Vereinnahmte ER",
 					"doctype": "Sales Invoice",
-					"is_query_report": True,
+					"is_query_report": True
 				}
 			]
 		},
@@ -111,13 +111,20 @@ def get_data():
 					"type": "report",
 					"name":"Adressen Mitglieder Zeitschrift",
 					"doctype": "Address",
-					"is_query_report": True,
+					"is_query_report": True
 				},
 				{
 				   "type": "page",
 				   "name": "touche-suchmaske",
 				   "label": _("Suchmaske"),
 				   "description": _("Suchmaske")
+				},
+				{
+					"type": "report",
+					"name":"BSV",
+					"doctype": "Touche Fall",
+					"is_query_report": True,
+					"label": _("BSV Report")
 				}
 			]
 		}

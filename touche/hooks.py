@@ -90,13 +90,13 @@ app_license = "AGPL"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"touche.tasks.all"
 # 	],
-# 	"daily": [
-# 		"touche.tasks.daily"
-# 	],
+	"daily": [
+		"touche.tasks.update_time"
+	]
 # 	"hourly": [
 # 		"touche.tasks.hourly"
 # 	],
@@ -106,7 +106,7 @@ app_license = "AGPL"
 # 	"monthly": [
 # 		"touche.tasks.monthly"
 # 	]
-# }
+}
 
 # Testing
 # -------
