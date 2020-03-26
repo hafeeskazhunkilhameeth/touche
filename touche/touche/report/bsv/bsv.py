@@ -5,110 +5,148 @@ from __future__ import unicode_literals
 import frappe
 
 def execute(filters=None):
-	#columns, data = ["Kunde:Link/Customer", "Fälle:Data", "IV-Leistung:Data", "Summe Zeitaufwand (h:mm):Data"], []
 	columns, data = [], []
-	if filters.beratungstyp:
-		beratungstyp = " AND `name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE `beratung_an` = '{beratungstyp}')".format(beratungstyp=filters.beratungstyp)
-	
 	if filters.auswertungstyp == 'Beratungsstunden':
-		columns, data = ["Kunde:Link/Customer", "Fälle:Data", "IV-Leistung:Data", "Summe Zeitaufwand (h:mm):Data"], []
-		alle_faelle_filter = " WHERE `name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE YEAR(`datum`) = '{year}')".format(year=filters.year)
-		if filters.iv_leistungen:
-			alle_faelle_filter += " AND `iv_leistungen` = '{iv_leistungen}'".format(iv_leistungen=filters.iv_leistungen)
-		if filters.customer:
-			alle_faelle_filter += " AND `kunde` = '{kunde}'".format(kunde=filters.customer)
-		alle_kunden = frappe.db.sql("""SELECT DISTINCT `kunde` FROM `tabTouche Fall`{alle_faelle_filter}{beratungstyp}""".format(alle_faelle_filter=alle_faelle_filter, beratungstyp=beratungstyp), as_dict=True)
-		total_std = 0
+		total_hh = 0
 		total_min = 0
-		for kunde in alle_kunden:
-			data_to_append = []
-			data_to_append.append(kunde.kunde)
-			faelle_pro_kunde = ''
-			iv_leistungen = ''
-			std = 0
-			min = 0
-			alle_faelle = frappe.db.sql("""SELECT * FROM `tabTouche Fall`{alle_faelle_filter} AND `kunde` = '{kunde}'{beratungstyp}""".format(alle_faelle_filter=alle_faelle_filter, kunde=kunde.kunde, beratungstyp=beratungstyp), as_dict=True)
-			if len(alle_faelle) > 0:
-				for fall in alle_faelle:
-					if fall.summe_zeitaufwand:
-						splittet_time = fall.summe_zeitaufwand.split(":")
-						std += int(splittet_time[0])
-						min += int(splittet_time[1])
-						total_std += int(splittet_time[0])
-						total_min += int(splittet_time[1])
-						
-					if faelle_pro_kunde == '':
-						faelle_pro_kunde = fall.name
-					else:
-						faelle_pro_kunde += ', ' + fall.name
-					iv_leistungen = fall.iv_leistungen
-				
-				while min > 60:
-					std += 1
-					min -= 60
-				if min == 60:
-					std += 1
-					min = 0
-				if min < 10:
-					min = "0" + str(min)
-						
-				data_to_append.append(faelle_pro_kunde)
-				data_to_append.append(iv_leistungen)
-				data_to_append.append(str(std) + ":" + str(min))
-				data.append(data_to_append)
-			else:
-				data_to_append.append(faelle_pro_kunde)
-				data_to_append.append(iv_leistungen)
-				data_to_append.append("00:00")
-				data.append(data_to_append)
-			
-		while total_min > 60:
-			total_std += 1
-			total_min -= 60
-		if total_min == 60:
-			total_std += 1
-			total_min = 0
-		if total_min < 10:
-			total_min = "0" + str(total_min)
-		data.append(["Total Kunden:", str(len(alle_kunden)), "Total Zeitaufwand:", str(total_std) + ":" + str(total_min)])
-	elif filters.auswertungstyp == 'Neukunden':
-		if filters.beratungstyp:
-			beratungstyp = " AND `name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE `beratung_an` = '{beratungstyp}')".format(beratungstyp=filters.beratungstyp)
-		alle_kunden = frappe.db.sql("""SELECT DISTINCT `kunde`
-										FROM `tabTouche Fall`
-										WHERE `name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE YEAR(`datum`) = '{year}')
-										AND `kunde` IN (SELECT `name` FROM `tabCustomer` WHERE YEAR(`creation`) = '{year}'){beratungstyp}""".format(year=filters.year, beratungstyp=beratungstyp), as_dict=True)
-		columns, data = ["Anzahl Neukunden mit Beratung(en) in {year}:Data:300".format(year=filters.year)], []
-		if len(alle_kunden) > 0:
-			data.append([str(len(alle_kunden))])
-		else:
-			data.append(["0"])
-	elif filters.auswertungstyp == 'nach Kanton':
-		typ_filter = ''
-		if filters.iv_leistungen:
-			typ_filter = " AND `tabFall`.`iv_leistungen` = '{iv_leistungen}'".format(iv_leistungen=filters.iv_leistungen)
-		if filters.beratungstyp:
-			beratungstyp = " AND `tabFall`.`name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE `beratung_an` = '{beratungstyp}')".format(beratungstyp=filters.beratungstyp)
-		alle_kunden = frappe.db.sql("""SELECT DISTINCT `tabFall`.`kunde`,
-										`tabKunde`.`kanton`
-										FROM `tabTouche Fall` AS `tabFall`
-										INNER JOIN `tabCustomer` AS `tabKunde`
-										ON `tabFall`.`kunde` = `tabKunde`.`name`
-										WHERE `tabFall`.`name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE YEAR(`datum`) = '{year}'){typ_filter}{beratungstyp}""".format(year=filters.year, typ_filter=typ_filter, beratungstyp=beratungstyp), as_dict=True)
-		columns, data = ["Kanton:Data", "Anzahl:Int"], []
-		verwendete_kantone = {}
-		if len(alle_kunden) > 0:
-			#data.append([str(len(alle_kunden))])
-			for kunde in alle_kunden:
-				if kunde.kanton not in verwendete_kantone:
-					verwendete_kantone[kunde.kanton] = 1
+		if not filters.customer:
+			columns = ["Kunde:Link/Customer", "IV Leistung:Data", "Summe Zeitaufwand (h:mm):Data"]
+			customer_filter = ''
+			if filters.iv_leistungen:
+				customer_filter = """ WHERE `iv_status` = '{iv_leistungen}'""".format(iv_leistungen=filters.iv_leistungen)
+			customers = frappe.db.sql("""SELECT `name`, `iv_status` FROM `tabCustomer`{customer_filter}""".format(customer_filter=customer_filter), as_dict=True)
+			for customer in customers:
+				_customer = """('{customer}')""".format(customer=customer.name)
+				alle_faelle = """(SELECT `name` FROM `tabTouche Fall` WHERE `kunde` IN {customer})""".format(customer=_customer)
+				if not filters.beratungstyp:
+					beratungstyp_filter = ''
 				else:
-					verwendete_kantone[kunde.kanton] += 1
-			for key in verwendete_kantone:
-				data.append([key, verwendete_kantone[key]])
-				#frappe.throw(str(key) + "...." + str(value))
+					beratungstyp_filter = """ AND `beratung_an` = '{beratungstyp}'""".format(beratungstyp=filters.beratungstyp)
+				beratungen = """(SELECT `name` FROM `tabTouche Beratung` WHERE `fall` IN {alle_faelle} AND YEAR(`datum`) = '{year}'{beratungstyp_filter})""".format(alle_faelle=alle_faelle, year=filters.year, beratungstyp_filter=beratungstyp_filter)
+				zeit_in_min = frappe.db.sql("""SELECT SUM(`dauer_in_min`) FROM `tabBeratungs Timesheet` WHERE `parent` IN {beratungen}""".format(beratungen=beratungen), as_list=True)
+				hh = 0
+				try:
+					zeit_in_min = int(zeit_in_min[0][0])
+				except:
+					zeit_in_min = 0
+				if zeit_in_min > 0:
+					while int(zeit_in_min) >= 60:
+						hh += 1
+						total_hh += 1
+						zeit_in_min -= 60
+					total_min += zeit_in_min
+					_data = []
+					_data.append(customer.name)
+					_data.append(customer.iv_status)
+					_data.append(str(hh) + ":" + str(zeit_in_min))
+					data.append(_data)
+			
 		else:
-			data.append(["Alle", "0"])
-	else:
-		columns, data = [], []
+			columns = ["Kunde:Link/Customer", "IV Leistung:Data", "Summe Zeitaufwand (h:mm):Data"]
+			customer = """('{customer}')""".format(customer=filters.customer)
+			_customer = frappe.get_doc("Customer", filters.customer)
+			alle_faelle = """(SELECT `name` FROM `tabTouche Fall` WHERE `kunde` IN {customer})""".format(customer=customer)
+			if not filters.beratungstyp:
+				beratungstyp_filter = ''
+			else:
+				beratungstyp_filter = """ AND `beratung_an` = '{beratungstyp}'""".format(beratungstyp=filters.beratungstyp)
+			beratungen = """(SELECT `name` FROM `tabTouche Beratung` WHERE `fall` IN {alle_faelle} AND YEAR(`datum`) = '{year}'{beratungstyp_filter})""".format(alle_faelle=alle_faelle, year=filters.year, beratungstyp_filter=beratungstyp_filter)
+			zeit_in_min = frappe.db.sql("""SELECT SUM(`dauer_in_min`) FROM `tabBeratungs Timesheet` WHERE `parent` IN {beratungen}""".format(beratungen=beratungen), as_list=True)
+			hh = 0
+			try:
+				zeit_in_min = int(zeit_in_min[0][0])
+			except:
+				zeit_in_min = 0
+			if zeit_in_min > 0:
+				while int(zeit_in_min) >= 60:
+					hh += 1
+					total_hh += 1
+					zeit_in_min -= 60
+				total_min += zeit_in_min
+				_data = []
+				_data.append(filters.customer)
+				_data.append(_customer.iv_status)
+				_data.append(str(hh) + ":" + str(zeit_in_min))
+				data.append(_data)
+		while total_min >= 60:
+			total_hh += 1
+			total_min -= 60
+		_data = []
+		_data.append("Total")
+		_data.append("")
+		_data.append(str(total_hh) + ":" + str(total_min))
+		data.append(_data)
+	if filters.auswertungstyp == 'nach Kanton':
+		columns = ["Kanton:Data:150", "Anzahl:Data:150"]
+		kantone = {
+			'AG': 0,
+			'AI': 0,
+			'AR': 0,
+			'BE': 0,
+			'BL': 0,
+			'BS': 0,
+			'FR': 0,
+			'GE': 0,
+			'GL': 0,
+			'GR': 0,
+			'JU': 0,
+			'LU': 0,
+			'NE': 0,
+			'NW': 0,
+			'OW': 0,
+			'SG': 0,
+			'SH': 0,
+			'SO': 0,
+			'SZ': 0,
+			'TG': 0,
+			'TI': 0,
+			'UR': 0,
+			'VD': 0,
+			'VS': 0,
+			'ZG': 0,
+			'ZH': 0,
+			'Ausland': 0
+		}
+		for key in kantone:
+			customer_filter = ''
+			if filters.iv_leistungen:
+				customer_filter = """ AND `iv_status` = '{iv_leistungen}'""".format(iv_leistungen=filters.iv_leistungen)
+			customers = frappe.db.sql("""SELECT `name` FROM `tabCustomer` WHERE `kanton` = '{key}'{customer_filter}""".format(key=key, customer_filter=customer_filter), as_dict=True)
+			for customer in customers:
+				faelle = frappe.db.sql("""SELECT `name` FROM `tabTouche Fall` WHERE `kunde` = '{kunde}'""".format(kunde=customer.name), as_dict=True)
+				if not filters.beratungstyp:
+					beratungstyp_filter = ''
+				else:
+					beratungstyp_filter = """ AND `beratung_an` = '{beratungstyp}'""".format(beratungstyp=filters.beratungstyp)
+				for fall in faelle:
+					anz_beratungen = frappe.db.sql("""SELECT COUNT(`name`) FROM `tabTouche Beratung` WHERE `fall` = '{fall}' AND YEAR(`datum`) = '{year}'{beratungstyp_filter}""".format(fall=fall.name, year=filters.year, beratungstyp_filter=beratungstyp_filter), as_list=True)
+					try:
+						anz = int(anz_beratungen[0][0])
+					except:
+						anz = 0
+					kantone[key] += anz
+		for key in kantone:
+			_data = []
+			_data.append(str(key))
+			_data.append(str(kantone[key]))
+			data.append(_data)
+			
+	if filters.auswertungstyp == 'Neukunden':
+		columns = ["Auswertung:Data:500"]
+		anz = 0
+		customer_filter = ''
+		if filters.iv_leistungen:
+			customer_filter = """ AND `iv_status` = '{iv_leistungen}'""".format(iv_leistungen=filters.iv_leistungen)
+		kunden = frappe.db.sql("""SELECT `name` FROM `tabCustomer` WHERE YEAR(`creation`) = '{year}'{customer_filter}""".format(year=filters.year, customer_filter=customer_filter), as_dict=True)
+		for kunde in kunden:
+			alle_faelle = """(SELECT `name` FROM `tabTouche Fall` WHERE `kunde` = '{kunde}')""".format(kunde=kunde.name)
+			beratungen = frappe.db.sql("""SELECT `name` FROM `tabTouche Beratung` WHERE `fall` IN {alle_faelle} AND YEAR(`datum`) = '{year}'""".format(alle_faelle=alle_faelle, year=filters.year), as_list=True)
+			if len(beratungen) > 0:
+				anz += 1
+		_data = []
+		_data.append("Im Jahr {year} wurden total {kunden} neu angelegt.".format(year=filters.year, kunden=len(kunden)))
+		data.append(_data)
+		_data = []
+		_data.append("Davon wurden im Jahr {year} insgesamt {anz} mindestens einmal beraten.".format(year=filters.year, anz=anz))
+		data.append(_data)
 	return columns, data
