@@ -12,7 +12,7 @@ def execute(filters=None):
 	
 	if filters.auswertungstyp == 'Beratungsstunden':
 		columns, data = ["Kunde:Link/Customer", "Fälle:Data", "IV-Leistung:Data", "Summe Zeitaufwand (h:mm):Data"], []
-		alle_faelle_filter = " WHERE YEAR(`creation`) = '{year}'".format(year=filters.year)
+		alle_faelle_filter = " WHERE `name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE YEAR(`datum`) = '{year}')".format(year=filters.year)
 		if filters.iv_leistungen:
 			alle_faelle_filter += " AND `iv_leistungen` = '{iv_leistungen}'".format(iv_leistungen=filters.iv_leistungen)
 		if filters.customer:
@@ -76,7 +76,7 @@ def execute(filters=None):
 			beratungstyp = " AND `name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE `beratung_an` = '{beratungstyp}')".format(beratungstyp=filters.beratungstyp)
 		alle_kunden = frappe.db.sql("""SELECT DISTINCT `kunde`
 										FROM `tabTouche Fall`
-										WHERE YEAR(`creation`) = '{year}'
+										WHERE `name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE YEAR(`datum`) = '{year}')
 										AND `kunde` IN (SELECT `name` FROM `tabCustomer` WHERE YEAR(`creation`) = '{year}'){beratungstyp}""".format(year=filters.year, beratungstyp=beratungstyp), as_dict=True)
 		columns, data = ["Anzahl Neukunden mit Beratung(en) in {year}:Data:300".format(year=filters.year)], []
 		if len(alle_kunden) > 0:
@@ -94,7 +94,7 @@ def execute(filters=None):
 										FROM `tabTouche Fall` AS `tabFall`
 										INNER JOIN `tabCustomer` AS `tabKunde`
 										ON `tabFall`.`kunde` = `tabKunde`.`name`
-										WHERE YEAR(`tabFall`.`creation`) = '{year}'{typ_filter}{beratungstyp}""".format(year=filters.year, typ_filter=typ_filter, beratungstyp=beratungstyp), as_dict=True)
+										WHERE `tabFall`.`name` IN (SELECT `fall` FROM `tabTouche Beratung` WHERE YEAR(`datum`) = '{year}'){typ_filter}{beratungstyp}""".format(year=filters.year, typ_filter=typ_filter, beratungstyp=beratungstyp), as_dict=True)
 		columns, data = ["Kanton:Data", "Anzahl:Int"], []
 		verwendete_kantone = {}
 		if len(alle_kunden) > 0:
