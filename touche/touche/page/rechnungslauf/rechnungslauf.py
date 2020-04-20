@@ -173,7 +173,7 @@ def _create_invoice(customers, typ):
 		
 			sales_invoice.flags.ignore_mandatory = True
 			sales_invoice.save(ignore_permissions=True)
-			referencenumber = sales_invoice.name.split("-")[1]
+			referencenumber = '2020' + sales_invoice.name.split("-")[2]
 			sales_invoice.update({
 				"esr_reference": esr.get_reference_number(referencenumber),
 				"esr_code": esr.generateCodeline(sales_invoice.grand_total, referencenumber, "010154388")
