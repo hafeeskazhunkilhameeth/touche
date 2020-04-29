@@ -21,7 +21,7 @@ frappe.query_reports["BSV"] = {
 			"fieldname": "iv_leistungen",
 			"label": __("IV-Leistungen"),
 			"fieldtype": "Select",
-			"options": ["n/a", "abklären", "AHV", "IV berechtigt", "nicht berechtigt"]
+			"options": ["n/a", "IV", "AHV", "Abklären", "Ehemalig IV", "nicht berechtigt"]
 		},
 		{
 			"fieldname": "auswertungstyp",
