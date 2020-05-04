@@ -132,21 +132,33 @@ def execute(filters=None):
 			data.append(_data)
 			
 	if filters.auswertungstyp == 'Neukunden':
-		columns = ["Auswertung:Data:500"]
+		columns = ["Auswertung:Data:600"]
 		anz = 0
+		anz_betroffene = 0
+		anz_angehoerige = 0
 		customer_filter = ''
 		if filters.iv_leistungen:
 			customer_filter = """ AND `iv_status` = '{iv_leistungen}'""".format(iv_leistungen=filters.iv_leistungen)
 		kunden = frappe.db.sql("""SELECT `name` FROM `tabCustomer` WHERE YEAR(`creation`) = '{year}'{customer_filter}""".format(year=filters.year, customer_filter=customer_filter), as_dict=True)
 		for kunde in kunden:
 			alle_faelle = """(SELECT `name` FROM `tabTouche Fall` WHERE `kunde` = '{kunde}')""".format(kunde=kunde.name)
+			# alle beratungen
 			beratungen = frappe.db.sql("""SELECT `name` FROM `tabTouche Beratung` WHERE `fall` IN {alle_faelle} AND YEAR(`datum`) = '{year}'""".format(alle_faelle=alle_faelle, year=filters.year), as_list=True)
 			if len(beratungen) > 0:
 				anz += 1
+			# beratungen "Betroffene"
+			beratungen = frappe.db.sql("""SELECT COUNT(`name`) FROM `tabTouche Beratung` WHERE `fall` IN {alle_faelle} AND YEAR(`datum`) = '{year}' AND `beratung_an` = 'Betroffener'""".format(alle_faelle=alle_faelle, year=filters.year), as_list=True)
+			anz_betroffene += beratungen[0][0]
+			# beratungen "Angehörige"
+			beratungen = frappe.db.sql("""SELECT COUNT(`name`) FROM `tabTouche Beratung` WHERE `fall` IN {alle_faelle} AND YEAR(`datum`) = '{year}' AND `beratung_an` = 'Angehöriger / Bezugsperson'""".format(alle_faelle=alle_faelle, year=filters.year), as_list=True)
+			anz_angehoerige += beratungen[0][0]
 		_data = []
 		_data.append("Im Jahr {year} wurden total {kunden} neu angelegt.".format(year=filters.year, kunden=len(kunden)))
 		data.append(_data)
 		_data = []
 		_data.append("Davon wurden im Jahr {year} insgesamt {anz} mindestens einmal beraten.".format(year=filters.year, anz=anz))
+		data.append(_data)
+		_data = []
+		_data.append('Diese {anz} Kunden wurden wie folgt Beraten; "Betroffene": {anz_betroffene}, "Angehörige / Bezugsperson": {anz_angehoerige}'.format(anz=anz, anz_betroffene=anz_betroffene, anz_angehoerige=anz_angehoerige))
 		data.append(_data)
 	return columns, data
