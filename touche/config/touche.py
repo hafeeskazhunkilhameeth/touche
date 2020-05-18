@@ -125,6 +125,12 @@ def get_data():
 					"doctype": "Touche Fall",
 					"is_query_report": True,
 					"label": _("BSV Report")
+				},
+				{
+					"type": "report",
+					"name":"Mitglieder Adressliste",
+					"doctype": "Address",
+					"is_query_report": True
 				}
 			]
 		}
