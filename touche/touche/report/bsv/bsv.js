@@ -12,12 +12,6 @@ frappe.query_reports["BSV"] = {
 			"reqd": 1
 		},
 		{
-			"fieldname": "customer",
-			"label": __("Customer"),
-			"fieldtype": "Link",
-			"options": "Customer"
-		},
-		{
 			"fieldname": "iv_leistungen",
 			"label": __("IV-Leistungen"),
 			"fieldtype": "Select",
